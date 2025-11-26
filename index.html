@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dealer Admin – Login</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="login-page">
+    <div class="login-card glass-card">
+      <div class="login-header">
+        <div class="login-brand">
+          <div class="login-logo">
+            <div class="login-logo-inner">DA</div>
+          </div>
+          <div>
+            <div class="login-title">Dealer Admin Panel</div>
+            <div class="login-subtitle">
+              Sign in to manage dealers and their inventory.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="login-form" class="login-form" autocomplete="off" novalidate>
+        <div class="form-row">
+          <label for="login-email">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            placeholder="you@dealer.com"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <label for="login-password">Password</label>
+          <input
+            id="login-password"
+            type="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <div id="login-error" class="error-text"></div>
+
+        <button type="submit" class="btn btn-primary login-submit">
+          <span>Sign in</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <span>Only admins can sign in. Session is stored in your browser.</span>
+      </div>
+      <div class="login-hint">
+        Demo credentials:
+        <strong>admin@dealer.com</strong> / <strong>admin123</strong>
+      </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+  </body>
+</html>
+
+

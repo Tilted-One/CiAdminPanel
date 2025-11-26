@@ -1,0 +1,1326 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg-color: #030712;
+  --bg-secondary: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --primary-color: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.5);
+  --accent-color: #06b6d4;
+  --accent-glow: rgba(6, 182, 212, 0.5);
+  --gradient-main: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+
+  /* Match CiProject glass look */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  --transition-speed: 0.3s;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+}
+
+body.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+  border: none;
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-primary {
+  background: var(--gradient-main);
+  color: #ffffff;
+  box-shadow: 0 10px 30px var(--primary-glow);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16),
+    transparent,
+    rgba(255, 255, 255, 0.06)
+  );
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
+  z-index: -1;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px var(--primary-glow);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+/* Shared layout to match CiProject */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 6%;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 1.25rem 0;
+  background: rgba(3, 7, 18, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-decoration: none;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo span {
+  color: var(--accent-color);
+}
+
+.nav-links {
+  display: flex;
+  gap: 3rem;
+  list-style: none;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background: var(--gradient-main);
+  transition: width 0.3s;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  border-color: var(--primary-color);
+  color: #ffffff;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 2.2rem 2.4rem 2rem;
+  animation: slideUp 0.55s ease-out;
+}
+
+.login-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: radial-gradient(
+      circle at 0 0,
+      rgba(59, 130, 246, 0.8),
+      transparent
+    ),
+    radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.9), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.7);
+}
+
+.login-logo-inner {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--text-main);
+}
+
+.login-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.login-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.16);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-row label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.form-row input,
+.form-row select {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease,
+    background-color var(--transition-speed) ease,
+    transform 0.08s ease;
+}
+
+.form-row input::placeholder {
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  border-color: var(--primary-color);
+  background-color: #020617;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.55),
+    0 12px 32px rgba(15, 23, 42, 0.9);
+}
+
+.form-row input.error,
+.form-row select.error {
+  border-color: #f97373;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.8);
+}
+
+.error-text {
+  min-height: 1.1rem;
+  font-size: 0.8rem;
+  color: #fecaca;
+  margin-top: 0.1rem;
+}
+
+.login-submit {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.login-footer {
+  margin-top: 1.6rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.login-hint {
+  margin-top: 0.85rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px dashed rgba(148, 163, 184, 0.55);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.login-hint strong {
+  color: var(--text-main);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  body.login-page {
+    align-items: flex-start;
+    padding: 2.2rem 1rem 1.5rem;
+  }
+
+  .login-card {
+    max-width: 420px;
+    padding: 1.7rem 1.6rem 1.5rem;
+  }
+
+  .login-header {
+    align-items: flex-start;
+  }
+
+  .login-badge {
+    font-size: 0.65rem;
+  }
+}
+
+/* Dashboard layout */
+.dashboard-page {
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+}
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 0.8rem 1.5rem;
+  margin: 1.25rem auto 0;
+  max-width: 1120px;
+}
+
+.nav-shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-logo-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: radial-gradient(
+      circle at 0 0,
+      rgba(59, 130, 246, 0.9),
+      transparent
+    ),
+    radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.9), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.nav-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease,
+    color var(--transition-speed) ease;
+}
+
+.nav-link-active {
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+}
+
+.nav-link:hover {
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--text-main);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 5  px;
+  padding-inline: 1rem;
+  padding-block: 0.45rem;
+  font-size: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  border-color: var(--primary-color);
+  color: var(--text-main);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.nav-logout {
+  margin-left: 0.5rem;
+}
+
+.dashboard-shell {
+  max-width: 1120px;
+  margin: 1.25rem auto 2.5rem;
+  padding: 0 1.5rem 0.5rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  letter-spacing: -0.03em;
+}
+
+.page-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.filter-group label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease,
+    background-color var(--transition-speed) ease;
+}
+
+.filter-group input::placeholder {
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.45);
+  background-color: #020617;
+}
+
+.dealer-section {
+  padding: 1.1rem 1.2rem 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.dealer-table-header {
+  display: grid;
+  grid-template-columns: 2.4fr 2fr 1.5fr 1.2fr 1.6fr;
+  gap: 0.75rem;
+  padding-bottom: 0.55rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.dealer-table-actions-label {
+  text-align: right;
+}
+
+.dealer-table-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.dealer-row {
+  display: grid;
+  grid-template-columns: 2.4fr 2fr 1.5fr 1.2fr 1.6fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.65rem 0.45rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease,
+    transform var(--transition-speed) ease,
+    border-color var(--transition-speed) ease;
+  border: 1px solid transparent;
+}
+
+.dealer-row:hover {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.dealer-cell {
+  font-size: 0.85rem;
+}
+
+.dealer-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dealer-name-main {
+  font-weight: 600;
+}
+
+.dealer-name-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.dealer-email,
+.dealer-phone {
+  color: var(--text-muted);
+}
+
+.dealer-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-active {
+  background: rgba(16, 185, 129, 0.16);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.status-inactive {
+  background: rgba(148, 163, 184, 0.12);
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.dealer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.dealer-empty-row {
+  padding: 1.4rem 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-speed) ease;
+  z-index: 1100;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 1);
+  padding: 1.4rem 1.5rem 1.1rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content-wide {
+  max-width: 960px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: background-color var(--transition-speed) ease,
+    border-color var(--transition-speed) ease,
+    transform var(--transition-speed) ease;
+}
+
+.modal-close:hover {
+  background: rgba(15, 23, 42, 1);
+  border-color: var(--primary-color);
+  transform: rotate(90deg);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.modal-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.4fr);
+  gap: 0.75rem 0.85rem;
+}
+
+.modal-form-wide {
+  grid-column: 1 / -1;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 800px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dealer-table-header {
+    display: none;
+  }
+
+  .dealer-row {
+    grid-template-columns: 1.9fr 1.4fr;
+    grid-template-rows: auto auto;
+  }
+
+  .dealer-email {
+    display: none;
+  }
+
+  .dealer-phone {
+    display: none;
+  }
+
+  .dealer-status {
+    justify-content: flex-start;
+  }
+
+  .dealer-actions {
+    justify-content: flex-start;
+  }
+
+  .modal-content {
+    max-width: 480px;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-nav {
+    padding-inline: 1rem;
+  }
+
+  .dashboard-shell {
+    padding-inline: 1rem;
+  }
+
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    margin-inline: 1rem;
+  }
+}
+
+/* Dealer detail page */
+.dealer-detail-page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+}
+
+.dealer-main-shell {
+  max-width: 1120px;
+  margin: 1.25rem auto 2.5rem;
+  padding: 0 1.5rem 0.5rem;
+}
+
+.dealer-error-card {
+  padding: 2.2rem 2.3rem 2rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.dealer-detail-page .dealer-section {
+  padding: 8rem 0;
+  min-height: 100vh;
+}
+
+.hidden {
+  display: none;
+}
+
+.dealer-status-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.dealer-status-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dealer-phone-line {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+}
+
+.dealer-phone-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dealer-phone-value {
+  font-size: 0.85rem;
+}
+
+.car-filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.3rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.car-filter-bar .filter-group {
+  flex: 1 1 0;
+  min-width: 180px;
+}
+
+.car-filter-bar .page-actions {
+  margin-left: auto;
+}
+
+.car-empty-row {
+  padding: 1.4rem 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.car-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.car-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--primary-color);
+  box-shadow: 0 10px 30px -10px var(--primary-glow);
+}
+
+.car-img-container {
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.car-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.car-img-placeholder {
+  background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.25),
+      rgba(6, 182, 212, 0.25)
+    );
+}
+
+.car-image-upload-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.car-image-upload-inner {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.car-image-preview-wrapper {
+  margin-top: 0.25rem;
+  min-height: 40px;
+}
+
+.car-image-preview {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+.car-detail-images-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.car-detail-image-slot {
+  flex: 0 0 200px;
+  height: 200px;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(15, 23, 42, 0.9);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.car-detail-image-upload {
+  border-style: dashed;
+  border-color: rgba(148, 163, 184, 0.7);
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.car-detail-image-upload-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.car-detail-image-upload-inner .upload-plus {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.car-detail-image-upload-inner input[type='file'] {
+  display: none;
+}
+
+.car-detail-image-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.car-detail-image-remove {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.car-card:hover .car-img {
+  transform: scale(1.1);
+}
+
+.status-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.car-details {
+  padding: 1.5rem;
+}
+
+.car-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.car-meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.car-actions-cell {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.status-purchasing {
+  background: rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.45);
+}
+
+.status-loading {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fed7aa;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+.status-arrived {
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.status-transit {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.nav-back-link {
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+@media (max-width: 800px) {
+  .dealer-main-shell {
+    padding-inline: 1rem;
+  }
+
+  .dealer-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dealer-header-side {
+    align-items: flex-start;
+  }
+
+  .car-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .car-table-header {
+    display: none;
+  }
+
+  .car-row {
+    grid-template-columns: 1.8fr 1.4fr;
+    grid-template-rows: auto auto;
+  }
+
+  .car-vin-cell {
+    display: none;
+  }
+
+  .car-year-cell {
+    display: none;
+  }
+
+  .car-status-cell {
+    justify-content: flex-start;
+  }
+
+  .car-actions-cell {
+    justify-content: flex-start;
+  }
+}
+
+/* Car detail modal (read-only info, similar to CiProject dealer.html) */
+.car-detail-body {
+  padding: 0.3rem 0.1rem 0.4rem;
+}
+
+.car-detail-vin {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  margin-bottom: 1.3rem;
+}
+
+.detail-group {
+  margin-bottom: 1.4rem;
+}
+
+.detail-group-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--accent-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.7rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.25rem;
+}
+
+.detail-item label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.15rem;
+}
+
+.detail-item span {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.detail-input {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease,
+    background-color var(--transition-speed) ease;
+}
+
+.detail-input:focus {
+  border-color: var(--primary-color);
+  background-color: #020617;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.55),
+    0 12px 32px rgba(15, 23, 42, 0.9);
+}
+
+.detail-vin-row {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+@media (min-width: 1000px) {
+  .detail-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.detail-item-wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Hero tag to match CiProject dealer header */
+.hero-tag {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-color);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  backdrop-filter: blur(4px);
+}
+
+.dealer-hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dealer-hero-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.dealer-total-label {
+  margin-bottom: 0.2rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.dealer-total-count {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 2rem;
+}
+
+.dealer-hero-phone {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 800px) {
+  .dealer-hero-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dealer-hero-right {
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+
+
+
+

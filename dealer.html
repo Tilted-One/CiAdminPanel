@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dealer Admin – Dealer Detail</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="dealer-detail-page">
+  <header>
+    <div class="container">
+      <nav>
+        <a href="dashboard.html" class="logo">Car Import<span>.</span></a>
+        <ul class="nav-links">
+          <li><a href="dashboard.html" class="active">Dashboard</a></li>
+          <button id="logout-btn" class="btn btn-outline" type="button"
+            style="padding: 0.5rem 1.5rem; font-size: 0.9rem; border-radius: 50px;">
+            Logout
+          </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section id="dealer-error" class="dealer-error hidden">
+    <div class="container">
+      <div class="glass-card dealer-error-card">
+        <h1 class="page-title">Dealer not found</h1>
+        <p class="page-subtitle">
+          We couldn’t find this dealer. It may have been removed or the link is invalid.
+        </p>
+        <a href="dashboard.html" class="btn btn-primary">Back to dealers</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="dealer-content" class="dealer-section hidden">
+    <div class="container">
+      <div class="dealer-hero-header">
+        <div>
+          <span class="hero-tag" style="margin-bottom: 1rem;">Dealer Room</span>
+          <h1 id="dealer-name-heading">Dealer name</h1>
+          <p id="dealer-email-line" class="page-subtitle">
+            email@dealer.com
+          </p>
+        </div>
+        <div class="dealer-hero-right">
+          <div>
+            <p class="dealer-total-label">Total Vehicles</p>
+            <h2 id="dealer-total-count" class="dealer-total-count">0</h2>
+          </div>
+          <div class="dealer-status-wrapper">
+            <span class="dealer-status-label">Status</span>
+            <span id="dealer-status-pill" class="status-pill status-active">
+              Active
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dealer-hero-phone">
+        <span class="dealer-phone-label">Phone</span>
+        <span class="dealer-phone-value" id="dealer-phone-line">-</span>
+      </div>
+
+      <div class="car-filter-bar glass-card" style="margin-top: 2rem;">
+        <div class="filter-group">
+          <label for="car-search">Search car</label>
+          <input id="car-search" type="text" placeholder="Search by model or VIN" />
+        </div>
+        <div class="filter-group">
+          <label for="car-status-filter">Status</label>
+          <select id="car-status-filter">
+            <option value="all">All</option>
+            <option value="purchasing">Purchasing</option>
+            <option value="loading">Loading</option>
+            <option value="arrived">Arrived</option>
+          </select>
+        </div>
+        <div class="page-actions">
+          <button id="new-car-btn" class="btn btn-primary" type="button">
+            + Add car
+          </button>
+        </div>
+      </div>
+
+      <div id="car-grid" class="car-grid"></div>
+    </div>
+  </section>
+
+  <!-- Car modal -->
+  <div id="car-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="car-modal-title">New car</h2>
+        <button id="car-modal-close" class="modal-close" type="button">
+          ×
+        </button>
+      </div>
+      <form id="car-form" class="modal-form" autocomplete="off" novalidate>
+        <div class="modal-form-grid">
+          <!-- Basic info -->
+          <div class="form-row">
+            <label for="car-title">Car title</label>
+            <input id="car-title" type="text" placeholder="2019 BMW 330i xDrive" required />
+          </div>
+          <div class="form-row">
+            <label for="car-status">Status</label>
+            <select id="car-status">
+              <option value="purchasing">Purchasing</option>
+              <option value="loading">Loading</option>
+              <option value="arrived">Arrived</option>
+            </select>
+          </div>
+
+          <!-- Vehicle details (match CiProject dealer.html) -->
+          <div class="form-row">
+            <label for="car-make">Manufacturer</label>
+            <input id="car-make" type="text" placeholder="BMW" required />
+          </div>
+          <div class="form-row">
+            <label for="car-model">Model</label>
+            <input id="car-model" type="text" placeholder="330i xDrive" required />
+          </div>
+          <div class="form-row">
+            <label for="car-year">Manufactured year</label>
+            <input id="car-year" type="text" placeholder="2020" required />
+          </div>
+          <div class="form-row">
+            <label for="car-lot-number">Lot number</label>
+            <input id="car-lot-number" type="text" placeholder="LOT-1234" required />
+          </div>
+
+          <!-- Logistics -->
+          <div class="form-row">
+            <label for="car-purchased-date">Purchased date</label>
+            <input
+              id="car-purchased-date"
+              type="text"
+              placeholder="2024-02-15"
+              required
+            />
+          </div>
+          <div class="form-row">
+            <label for="car-arrival-date">Est. arrival</label>
+            <input
+              id="car-arrival-date"
+              type="text"
+              placeholder="2024-04-10"
+              required
+            />
+          </div>
+          <div class="form-row">
+            <label for="car-container-number">Container number</label>
+            <input id="car-container-number" type="text" placeholder="MSKU1234567" required />
+          </div>
+          <div class="form-row">
+            <label for="car-shipping-line">Shipping line</label>
+            <input id="car-shipping-line" type="text" placeholder="Maersk" required />
+          </div>
+
+          <!-- Owner information -->
+          <div class="form-row">
+            <label for="car-owner-name">Owner full name</label>
+            <input id="car-owner-name" type="text" placeholder="John Doe" required />
+          </div>
+          <div class="form-row">
+            <label for="car-owner-phone">Owner phone</label>
+            <input id="car-owner-phone" type="text" placeholder="+1 555 000 0000" required />
+          </div>
+          <div class="form-row modal-form-wide">
+            <label for="car-owner-address">Owner address</label>
+            <input
+              id="car-owner-address"
+              type="text"
+              placeholder="123 Harbor St, Los Angeles, CA"
+              required
+            />
+          </div>
+
+          <!-- Financials -->
+          <div class="form-row">
+            <label for="car-price-auction">Auction price</label>
+            <input id="car-price-auction" type="text" placeholder="$18,500" required />
+          </div>
+          <div class="form-row">
+            <label for="car-price-transport">Transporting price</label>
+            <input id="car-price-transport" type="text" placeholder="$2,100" required />
+          </div>
+
+          <!-- VIN -->
+          <div class="form-row modal-form-wide">
+            <label for="car-vin">VIN</label>
+            <input id="car-vin" type="text" placeholder="Enter VIN" required />
+          </div>
+
+          <!-- Images -->
+          <div class="form-row modal-form-wide">
+            <label>Car images</label>
+            <div id="car-form-images-row" class="car-detail-images-row"></div>
+          </div>
+        </div>
+
+        <div id="car-form-error" class="error-text"></div>
+
+        <div class="modal-footer">
+          <button id="car-modal-cancel" class="btn btn-ghost" type="button">
+            Cancel
+          </button>
+          <button class="btn btn-primary" type="submit">Save car</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Car detail modal (now editable, shows same info structure as CiProject dealer.html) -->
+  <div id="car-detail-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content modal-content-wide">
+      <div class="modal-header">
+        <h2 id="car-detail-title">Car Name</h2>
+        <button id="car-detail-close" class="modal-close" type="button">
+          ×
+        </button>
+      </div>
+      <form id="car-detail-form" class="car-detail-form">
+        <div class="car-detail-body">
+          <div id="car-detail-images-row" class="car-detail-images-row"></div>
+
+          <div class="detail-vin-row">
+            <label for="detail-vin">VIN</label>
+            <input id="detail-vin" type="text" class="detail-input" />
+          </div>
+
+          <div class="detail-group">
+            <h3 class="detail-group-title">Vehicle Details</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>Manufacturer</label>
+                <input id="detail-make" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Model</label>
+                <input id="detail-model" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Manufactured Date</label>
+                <input id="detail-year" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Lot Number</label>
+                <input id="detail-lot" type="text" class="detail-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-group">
+            <h3 class="detail-group-title">Logistics</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>Purchased Date</label>
+                <input id="detail-purchased" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Est. Arrival</label>
+                <input id="detail-arrival" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Container Number</label>
+                <input id="detail-container" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Shipping Line</label>
+                <input id="detail-shipping" type="text" class="detail-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-group">
+            <h3 class="detail-group-title">Owner Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>Full Name</label>
+                <input id="detail-owner" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item">
+                <label>Phone Number</label>
+                <input id="detail-phone" type="text" class="detail-input" />
+              </div>
+              <div class="detail-item detail-item-wide">
+                <label>Address</label>
+                <input id="detail-address" type="text" class="detail-input" />
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-group">
+            <h3 class="detail-group-title">Financials</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>Auction Price</label>
+                <input
+                  id="detail-price-auction"
+                  type="text"
+                  class="detail-input"
+                />
+              </div>
+              <div class="detail-item">
+                <label>Transporting Price</label>
+                <input
+                  id="detail-price-transport"
+                  type="text"
+                  class="detail-input"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            id="car-detail-cancel"
+            class="btn btn-ghost"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary" type="submit">
+            Save changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/dealer-detail.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dealer Admin – Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="dashboard-page">
+    <header class="top-nav glass-card">
+      <div class="nav-shell">
+        <div class="nav-left">
+          <div class="nav-brand-text">
+            <span class="brand-title">Dealer Admin</span>
+            <span class="brand-subtitle">Control center</span>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button id="logout-btn" class="btn btn-ghost nav-logout" type="button">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-shell">
+      <section class="page-header">
+        <div>
+          <h1 class="page-title">Dealers</h1>
+          <p class="page-subtitle">
+            View, register and manage all dealers from a single place.
+          </p>
+        </div>
+        <div class="page-actions">
+          <button id="new-dealer-btn" class="btn btn-primary" type="button">
+            + New Dealer
+          </button>
+        </div>
+      </section>
+
+      <section class="filter-bar glass-card">
+        <div class="filter-group">
+          <label for="dealer-search">Search dealer</label>
+          <input
+            id="dealer-search"
+            type="text"
+            placeholder="Search by name or email"
+          />
+        </div>
+        <div class="filter-group">
+          <label for="dealer-status-filter">Status</label>
+          <select id="dealer-status-filter">
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="dealer-section glass-card">
+        <div class="dealer-table-header">
+          <span>Name</span>
+          <span>Email</span>
+          <span>Phone</span>
+          <span>Status</span>
+          <span class="dealer-table-actions-label">Actions</span>
+        </div>
+        <div id="dealer-list" class="dealer-table-body"></div>
+      </section>
+    </main>
+
+    <!-- Dealer modal -->
+    <div id="dealer-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="dealer-modal-title">New Dealer</h2>
+          <button id="dealer-modal-close" class="modal-close" type="button">
+            ×
+          </button>
+        </div>
+        <form id="dealer-form" class="modal-form" autocomplete="off" novalidate>
+          <div class="modal-form-grid">
+            <div class="form-row">
+              <label for="dealer-name">Name</label>
+              <input
+                id="dealer-name"
+                type="text"
+                placeholder="Dealer name"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label for="dealer-email">Email</label>
+              <input
+                id="dealer-email"
+                type="email"
+                placeholder="email@dealer.com"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label for="dealer-phone">Phone</label>
+              <input
+                id="dealer-phone"
+                type="text"
+                placeholder="+1 555 0101"
+              />
+            </div>
+            <div class="form-row">
+              <label for="dealer-status">Status</label>
+              <select id="dealer-status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="dealer-form-error" class="error-text"></div>
+
+          <div class="modal-footer">
+            <button
+              id="dealer-modal-cancel"
+              class="btn btn-ghost"
+              type="button"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary" type="submit">Save dealer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
+
+
