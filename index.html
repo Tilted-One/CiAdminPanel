@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dealer Admin – Login</title>
+    <title>JeraMotors – Login</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body class="login-page">
@@ -11,12 +12,12 @@
       <div class="login-header">
         <div class="login-brand">
           <div class="login-logo">
-            <div class="login-logo-inner">DA</div>
+            <div class="login-logo-inner">JM</div>
           </div>
           <div>
-            <div class="login-title">Dealer Admin Panel</div>
+            <div class="login-title">JeraMotors Admin Panel</div>
             <div class="login-subtitle">
-              Sign in to manage dealers and their inventory.
+              Sign in to manage dealers and their inventory.  
             </div>
           </div>
         </div>
@@ -24,11 +25,11 @@
 
       <form id="login-form" class="login-form" autocomplete="off" novalidate>
         <div class="form-row">
-          <label for="login-email">Email</label>
+          <label for="login-email">Username</label>
           <input
             id="login-email"
-            type="email"
-            placeholder="you@dealer.com"
+            type="text"
+            placeholder="Username"
             required
           />
         </div>
@@ -51,14 +52,8 @@
       <div class="login-footer">
         <span>Only admins can sign in. Session is stored in your browser.</span>
       </div>
-      <div class="login-hint">
-        Demo credentials:
-        <strong>admin@dealer.com</strong> / <strong>admin123</strong>
-      </div>
     </div>
 
-    <script src="js/auth.js"></script>
+    <script src="js/api-login.js"></script>
   </body>
 </html>
-
-

@@ -1,11 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Simple session guard
-  const session = localStorage.getItem('adminSession');
-  if (session !== 'active') {
-    window.location.href = 'index.html';
-    return;
-  }
-
   const logoutBtn = document.getElementById('logout-btn');
   const dealerListEl = document.getElementById('dealer-list');
   const searchInput = document.getElementById('dealer-search');
@@ -23,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const dealerEmailInput = document.getElementById('dealer-email');
   const dealerPhoneInput = document.getElementById('dealer-phone');
   const dealerStatusSelect = document.getElementById('dealer-status');
+  const dealerUsernameInput = document.getElementById('dealer-username');
+  const dealerPasswordInput = document.getElementById('dealer-password');
 
   let dealers = [];
   let editDealerId = null;
@@ -57,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         saveDealers();
       } else {
-        dealers = JSON.parse(raw);
+      dealers = JSON.parse(raw);
       }
     } catch (e) {
       console.error('Failed to load dealers', e);
@@ -93,13 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!filtered.length) {
       dealerListEl.innerHTML =
-        '<div class="dealer-empty-row">No dealers found. Try adjusting filters or add a new dealer.</div>';
+        '<div class="dealer-empty-row">დილერები ვერ მოიძებნა. სცადეთ ფილტრების შეცვლა ან დაამატეთ ახალი დილერი.</div>';
       return;
     }
 
     dealerListEl.innerHTML = filtered
       .map((dealer) => {
-        const statusLabel = dealer.status === 'active' ? 'Active' : 'Inactive';
+        const statusLabel = dealer.status === 'active' ? 'აქტიური' : 'არააქტიური';
         return `
           <div class="dealer-row" data-id="${dealer.id}">
             <div class="dealer-cell dealer-name">
@@ -123,14 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 type="button"
                 data-id="${dealer.id}"
               >
-                Edit
+                რედაქტირება
               </button>
               <button
                 class="btn btn-ghost dealer-delete-btn"
                 type="button"
                 data-id="${dealer.id}"
               >
-                Delete
+                წაშლა
               </button>
             </div>
           </div>
@@ -146,18 +141,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (mode === 'edit' && dealer) {
       editDealerId = dealer.id;
-      dealerModalTitle.textContent = 'Edit Dealer';
+      dealerModalTitle.textContent = 'დილერის რედაქტირება';
       dealerNameInput.value = dealer.name || '';
       dealerEmailInput.value = dealer.email || '';
       dealerPhoneInput.value = dealer.phone || '';
       dealerStatusSelect.value = dealer.status || 'active';
+      dealerUsernameInput.value = dealer.username || '';
+      dealerPasswordInput.value = dealer.password || '';
     } else {
       editDealerId = null;
-      dealerModalTitle.textContent = 'New Dealer';
+      dealerModalTitle.textContent = 'ახალი დილერი';
       dealerNameInput.value = '';
       dealerEmailInput.value = '';
       dealerPhoneInput.value = '';
       dealerStatusSelect.value = 'active';
+      dealerUsernameInput.value = '';
+      dealerPasswordInput.value = '';
     }
 
     dealerModal.setAttribute('aria-hidden', 'false');
@@ -179,9 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = String(dealerEmailInput.value || '').trim();
     const phone = String(dealerPhoneInput.value || '').trim();
     const status = dealerStatusSelect.value || 'active';
+    const username = String(dealerUsernameInput.value || '').trim();
+    const password = String(dealerPasswordInput.value || '').trim();
 
     if (!name || !email) {
-      dealerFormError.textContent = 'Name and email are required.';
+      dealerFormError.textContent = 'სახელი და ელ-ფოსტა სავალდებულოა.';
       if (!name) dealerNameInput.classList.add('error');
       if (!email) dealerEmailInput.classList.add('error');
       return;
@@ -196,6 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
         email,
         phone,
         status,
+        username,
+        password,
         cars: [],
       });
     } else {
@@ -208,6 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
               email,
               phone,
               status,
+              username,
+              password,
             }
           : d
       );
@@ -220,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event bindings
   logoutBtn?.addEventListener('click', () => {
-    localStorage.removeItem('adminSession');
+    // Simple navigation back to login; no session handling
     window.location.href = 'index.html';
   });
 
@@ -267,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!dealer) return;
 
       const confirmed = window.confirm(
-        `Delete dealer "${dealer.name}" and all of its cars?`
+        `გსურთ დილერის "${dealer.name}" და მისი ყველა ავტომობილის წაშლა?`
       );
       if (!confirmed) return;
 

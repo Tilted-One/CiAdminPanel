@@ -1,11 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Simple session guard
-  const session = localStorage.getItem('adminSession');
-  if (session !== 'active') {
-    window.location.href = 'index.html';
-    return;
-  }
-
   const dealerErrorSection = document.getElementById('dealer-error');
   const dealerContentSection = document.getElementById('dealer-content');
 
@@ -758,7 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event bindings
   logoutBtn?.addEventListener('click', () => {
-    localStorage.removeItem('adminSession');
+    // Just navigate back to login; no session handling
     window.location.href = 'index.html';
   });
 

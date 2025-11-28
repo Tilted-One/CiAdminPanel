@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dealer Admin – Dashboard</title>
+    <title>JeraMotors – დაფა</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body class="dashboard-page">
@@ -11,13 +12,13 @@
       <div class="nav-shell">
         <div class="nav-left">
           <div class="nav-brand-text">
-            <span class="brand-title">Dealer Admin</span>
-            <span class="brand-subtitle">Control center</span>
+            <span class="brand-title">JeraMotors Admin</span>
+            <span class="brand-subtitle">თბილისი, ნადირაშვილის 22 (Dirsi) · 596 99 55 88</span>
           </div>
         </div>
         <div class="nav-right">
           <button id="logout-btn" class="btn btn-ghost nav-logout" type="button">
-            Logout
+            გასვლა
           </button>
         </div>
       </div>
@@ -26,44 +27,44 @@
     <main class="dashboard-shell">
       <section class="page-header">
         <div>
-          <h1 class="page-title">Dealers</h1>
+          <h1 class="page-title">დილერები</h1>
           <p class="page-subtitle">
-            View, register and manage all dealers from a single place.
+            ნახეთ, რეგისტრირეთ და მართეთ ყველა დილერი ერთ ადგილას.
           </p>
         </div>
         <div class="page-actions">
           <button id="new-dealer-btn" class="btn btn-primary" type="button">
-            + New Dealer
+            + ახალი დილერი
           </button>
         </div>
       </section>
 
       <section class="filter-bar glass-card">
         <div class="filter-group">
-          <label for="dealer-search">Search dealer</label>
+          <label for="dealer-search">დილერის ძიება</label>
           <input
             id="dealer-search"
             type="text"
-            placeholder="Search by name or email"
+            placeholder="ძებნა სახელით ან ელ-ფოსტით"
           />
         </div>
         <div class="filter-group">
-          <label for="dealer-status-filter">Status</label>
+          <label for="dealer-status-filter">სტატუსი</label>
           <select id="dealer-status-filter">
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="all">ყველა</option>
+            <option value="active">აქტიური</option>
+            <option value="inactive">არააქტიური</option>
           </select>
         </div>
       </section>
 
       <section class="dealer-section glass-card">
         <div class="dealer-table-header">
-          <span>Name</span>
-          <span>Email</span>
-          <span>Phone</span>
-          <span>Status</span>
-          <span class="dealer-table-actions-label">Actions</span>
+          <span>დასახელება</span>
+          <span>ელ-ფოსტა</span>
+          <span>ტელეფონი</span>
+          <span>სტატუსი</span>
+          <span class="dealer-table-actions-label">ქმედებები</span>
         </div>
         <div id="dealer-list" class="dealer-table-body"></div>
       </section>
@@ -73,7 +74,7 @@
     <div id="dealer-modal" class="modal-overlay" aria-hidden="true">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 id="dealer-modal-title">New Dealer</h2>
+          <h2 id="dealer-modal-title">ახალი დილერი</h2>
           <button id="dealer-modal-close" class="modal-close" type="button">
             ×
           </button>
@@ -81,16 +82,16 @@
         <form id="dealer-form" class="modal-form" autocomplete="off" novalidate>
           <div class="modal-form-grid">
             <div class="form-row">
-              <label for="dealer-name">Name</label>
+              <label for="dealer-name">დასახელება</label>
               <input
                 id="dealer-name"
                 type="text"
-                placeholder="Dealer name"
+                placeholder="დილერის დასახელება"
                 required
               />
             </div>
             <div class="form-row">
-              <label for="dealer-email">Email</label>
+              <label for="dealer-email">ელ-ფოსტა</label>
               <input
                 id="dealer-email"
                 type="email"
@@ -99,19 +100,36 @@
               />
             </div>
             <div class="form-row">
-              <label for="dealer-phone">Phone</label>
+              <label for="dealer-phone">ტელეფონი</label>
               <input
                 id="dealer-phone"
                 type="text"
-                placeholder="+1 555 0101"
+                placeholder="+995 5XX XX XX XX"
               />
             </div>
             <div class="form-row">
-              <label for="dealer-status">Status</label>
+              <label for="dealer-status">სტატუსი</label>
               <select id="dealer-status">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="active">აქტიური</option>
+                <option value="inactive">არააქტიური</option>
               </select>
+            </div>
+            <div class="form-row">
+              <label for="dealer-username">მომხმარებლის სახელი</label>
+              <input
+                id="dealer-username"
+                type="text"
+                placeholder="მომხმარებელი ამ დილერისთვის"
+              />
+            </div>
+            <div class="form-row">
+              <label for="dealer-password">პაროლი</label>
+              <input
+                id="dealer-password"
+                type="text"
+                placeholder="პაროლი ამ დილერისთვის"
+                autocomplete="off"
+              />
             </div>
           </div>
 
@@ -123,17 +141,14 @@
               class="btn btn-ghost"
               type="button"
             >
-              Cancel
+              გაუქმება
             </button>
-            <button class="btn btn-primary" type="submit">Save dealer</button>
+            <button class="btn btn-primary" type="submit">დილერის შენახვა</button>
           </div>
         </form>
       </div>
     </div>
 
-    <script src="js/auth.js"></script>
     <script src="js/dashboard.js"></script>
   </body>
 </html>
-
-

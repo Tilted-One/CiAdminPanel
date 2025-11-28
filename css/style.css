@@ -1260,6 +1260,62 @@ nav {
   }
 }
 
+/* Global site footer with company info */
+.site-footer {
+  margin-top: 2rem;
+  padding: 1rem 0 1.5rem;
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  background: rgba(3, 7, 18, 0.9);
+}
+
+.site-footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-company {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.footer-company-ge {
+  font-weight: 600;
+}
+
+.footer-company-en {
+  font-size: 0.85rem;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: right;
+}
+
+.footer-phone {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+@media (max-width: 600px) {
+  .site-footer-inner {
+    padding-inline: 1rem;
+  }
+
+  .footer-contact {
+    text-align: left;
+  }
+}
+
 /* Hero tag to match CiProject dealer header */
 .hero-tag {
   display: inline-block;
