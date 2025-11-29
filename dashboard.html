@@ -61,7 +61,6 @@
       <section class="dealer-section glass-card">
         <div class="dealer-table-header">
           <span>დასახელება</span>
-          <span>ელ-ფოსტა</span>
           <span>ტელეფონი</span>
           <span>სტატუსი</span>
           <span class="dealer-table-actions-label">ქმედებები</span>
@@ -91,20 +90,19 @@
               />
             </div>
             <div class="form-row">
-              <label for="dealer-email">ელ-ფოსტა</label>
-              <input
-                id="dealer-email"
-                type="email"
-                placeholder="email@dealer.com"
-                required
-              />
-            </div>
-            <div class="form-row">
               <label for="dealer-phone">ტელეფონი</label>
               <input
                 id="dealer-phone"
                 type="text"
                 placeholder="+995 5XX XX XX XX"
+              />
+            </div>
+            <div class="form-row">
+              <label for="dealer-address">მისამართი</label>
+              <input
+                id="dealer-address"
+                type="text"
+                placeholder="თბილისი, ნადირაშვილის 22"
               />
             </div>
             <div class="form-row">
@@ -149,6 +147,8 @@
       </div>
     </div>
 
+    <script src="js/dealer-api.js"></script>
+    <script src="js/dealer-list.js"></script>
     <script src="js/dashboard.js"></script>
   </body>
 </html>

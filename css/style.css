@@ -580,7 +580,7 @@ nav {
 
 .dealer-table-header {
   display: grid;
-  grid-template-columns: 2.4fr 2fr 1.5fr 1.2fr 1.6fr;
+  grid-template-columns: 2.6fr 1.6fr 1.2fr 1.4fr;
   gap: 0.75rem;
   padding-bottom: 0.55rem;
   margin-bottom: 0.6rem;
@@ -603,7 +603,7 @@ nav {
 
 .dealer-row {
   display: grid;
-  grid-template-columns: 2.4fr 2fr 1.5fr 1.2fr 1.6fr;
+  grid-template-columns: 2.6fr 1.6fr 1.2fr 1.4fr;
   gap: 0.75rem;
   align-items: center;
   padding: 0.65rem 0.45rem;
@@ -640,7 +640,6 @@ nav {
   color: var(--text-muted);
 }
 
-.dealer-email,
 .dealer-phone {
   color: var(--text-muted);
 }
@@ -648,6 +647,13 @@ nav {
 .dealer-status {
   display: flex;
   align-items: center;
+}
+
+.dealer-row-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .status-pill {
@@ -792,14 +798,6 @@ nav {
   .dealer-row {
     grid-template-columns: 1.9fr 1.4fr;
     grid-template-rows: auto auto;
-  }
-
-  .dealer-email {
-    display: none;
-  }
-
-  .dealer-phone {
-    display: none;
   }
 
   .dealer-status {

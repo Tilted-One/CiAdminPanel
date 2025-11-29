@@ -36,13 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // ✅ READ TOKEN AS TEXT (NOT JSON)
-            const token = await response.text();
+            const tokenResponse = await response.text();
+            const token = tokenResponse.replace(/"/g, "");
 
             if (response.status === 200 && token) {
-                // ✅ SAVE TOKEN
                 localStorage.setItem('token', token);
 
-                // ✅ REDIRECT TO DASHBOARD
+
                 window.location.href = 'dashboard.html';
                 return;
             }

@@ -1,0 +1,79 @@
+(function () {
+  const REGISTER_DEALER_URL = 'http://57.131.25.31:8080/registerdealer';
+
+  const cleanToken = () => {
+    const raw = localStorage.getItem('token');
+    return raw ? raw.replace(/"/g, '') : '';
+  };
+
+  const normalizeStatus = (status) => {
+    if (typeof status === 'number') {
+      return status === 1 ? 1 : 0;
+    }
+
+    if (typeof status === 'string') {
+      const normalized = status.trim().toLowerCase();
+      return normalized === 'active' ? 1 : 0;
+    }
+
+    if (typeof status === 'boolean') {
+      return status ? 1 : 0;
+    }
+
+    return 0;
+  };
+
+  const buildPayload = (dealerPayload = {}) => ({
+    name: dealerPayload.name || '',
+    username: dealerPayload.username || '',
+    passwordHash: dealerPayload.password || '',
+    contactNumber: dealerPayload.phone || '',
+    address: dealerPayload.address || '',
+    status: normalizeStatus(dealerPayload.status),
+    cars: Array.isArray(dealerPayload.cars) ? dealerPayload.cars : [],
+  });
+
+  async function registerDealer(dealerPayload = {}) {
+    const token = cleanToken();
+
+    if (!token) {
+      throw new Error('Missing authentication token. Please login again.');
+    }
+
+    const body = buildPayload(dealerPayload);
+
+    const response = await fetch(REGISTER_DEALER_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const responseText = await response.text();
+    let parsedResponse = null;
+
+    if (responseText) {
+      try {
+        parsedResponse = JSON.parse(responseText);
+      } catch (error) {
+        parsedResponse = responseText;
+      }
+    }
+
+    if (!response.ok) {
+      const message =
+        typeof parsedResponse === 'string' && parsedResponse
+          ? parsedResponse
+          : parsedResponse?.message || 'Failed to register dealer.';
+      throw new Error(message);
+    }
+
+    return parsedResponse;
+  }
+
+  window.dealerApi = window.dealerApi || {};
+  window.dealerApi.registerDealer = registerDealer;
+})();
