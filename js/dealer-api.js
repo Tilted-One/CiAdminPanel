@@ -6,30 +6,12 @@
     return raw ? raw.replace(/"/g, '') : '';
   };
 
-  const normalizeStatus = (status) => {
-    if (typeof status === 'number') {
-      return status === 1 ? 1 : 0;
-    }
-
-    if (typeof status === 'string') {
-      const normalized = status.trim().toLowerCase();
-      return normalized === 'active' ? 1 : 0;
-    }
-
-    if (typeof status === 'boolean') {
-      return status ? 1 : 0;
-    }
-
-    return 0;
-  };
-
   const buildPayload = (dealerPayload = {}) => ({
     name: dealerPayload.name || '',
     username: dealerPayload.username || '',
     passwordHash: dealerPayload.password || '',
     contactNumber: dealerPayload.phone || '',
     address: dealerPayload.address || '',
-    status: normalizeStatus(dealerPayload.status),
     cars: Array.isArray(dealerPayload.cars) ? dealerPayload.cars : [],
   });
 

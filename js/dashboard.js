@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
   const dealerListEl = document.getElementById('dealer-list');
   const searchInput = document.getElementById('dealer-search');
-  const statusFilter = document.getElementById('dealer-status-filter');
   const newDealerBtn = document.getElementById('new-dealer-btn');
 
   const dealerModal = document.getElementById('dealer-modal');
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const dealerNameInput = document.getElementById('dealer-name');
   const dealerPhoneInput = document.getElementById('dealer-phone');
   const dealerAddressInput = document.getElementById('dealer-address');
-  const dealerStatusSelect = document.getElementById('dealer-status');
   const dealerUsernameInput = document.getElementById('dealer-username');
   const dealerPasswordInput = document.getElementById('dealer-password');
 
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
   dealerListStore.init({
     listEl: dealerListEl,
     searchInput,
-    statusFilter,
   });
 
   let editDealerId = null;
@@ -43,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dealerNameInput.value = dealer.name || '';
       dealerPhoneInput.value = dealer.phone || '';
       dealerAddressInput.value = dealer.address || '';
-      dealerStatusSelect.value = dealer.status || 'active';
       dealerUsernameInput.value = dealer.username || '';
       dealerPasswordInput.value = dealer.password || '';
     } else {
@@ -52,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dealerNameInput.value = '';
       dealerPhoneInput.value = '';
       dealerAddressInput.value = '';
-      dealerStatusSelect.value = 'active';
       dealerUsernameInput.value = '';
       dealerPasswordInput.value = '';
     }
@@ -74,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = String(dealerNameInput.value || '').trim();
     const phone = String(dealerPhoneInput.value || '').trim();
     const address = String(dealerAddressInput.value || '').trim();
-    const status = dealerStatusSelect.value || 'active';
     const username = String(dealerUsernameInput.value || '').trim();
     const password = String(dealerPasswordInput.value || '').trim();
 
@@ -88,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
       name,
       phone,
       address,
-      status,
       username,
       password,
     };
@@ -126,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event bindings
   logoutBtn?.addEventListener('click', () => {
-    // Simple navigation back to login; no session handling
+    localStorage.removeItem('token');
     window.location.href = 'index.html';
   });
 

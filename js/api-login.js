@@ -6,6 +6,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const API_URL = 'http://57.131.25.31:8080/loginadmin';
 
+    // Auto-login check
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+        fetch('http://57.131.25.31:8080/dealers', {
+            headers: {
+                'Authorization': `Bearer ${storedToken}`,
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = 'dashboard.html';
+            } else {
+                localStorage.removeItem('token');
+            }
+        })
+        .catch(() => {
+            localStorage.removeItem('token');
+        });
+    }
+
     if (!form || !loginInput || !passwordInput || !errorBox) return;
 
     form.addEventListener('submit', async (event) => {

@@ -6,7 +6,6 @@ const dealerListStore = (() => {
   const state = {
     listEl: null,
     searchInput: null,
-    statusFilter: null,
     dealers: [],
   };
 
@@ -46,25 +45,6 @@ const dealerListStore = (() => {
       console.warn('Unable to cache dealers.', error);
     }
   };
-
-  const normalizeStatusValue = (status) => {
-    if (typeof status === 'string') {
-      return status.toLowerCase();
-    }
-
-    if (typeof status === 'number') {
-      return status === 1 ? 'active' : 'inactive';
-    }
-
-    if (typeof status === 'boolean') {
-      return status ? 'active' : 'inactive';
-    }
-
-    return 'inactive';
-  };
-
-  const formatStatusLabel = (status) =>
-    normalizeStatusValue(status) === 'active' ? 'აქტიური' : 'არააქტიური';
 
   const getDealerId = (dealer) => {
     if (!dealer) return '';
@@ -110,10 +90,6 @@ const dealerListStore = (() => {
       row.className = 'dealer-row';
       row.dataset.id = getDealerId(dealer);
 
-      const statusValue = normalizeStatusValue(dealer?.status);
-      const statusClass =
-        statusValue === 'active' ? 'status-pill status-active' : 'status-pill';
-
       const username = dealer?.username || dealer?.login || '';
       const phone =
         dealer?.phone ||
@@ -129,12 +105,9 @@ const dealerListStore = (() => {
       row.innerHTML = `
         <div class="dealer-name">
           <span class="dealer-name-main">${dealer?.name || 'უცნობი დილერი'}</span>
-          ${nameSub}
+  
         </div>
         <span class="dealer-phone">${phone}</span>
-        <span class="dealer-status">
-          <span class="${statusClass}">${formatStatusLabel(dealer?.status)}</span>
-        </span>
         <div class="dealer-row-actions">
           <button type="button" class="btn btn-ghost dealer-delete-btn">წაშლა</button>
         </div>
@@ -149,9 +122,6 @@ const dealerListStore = (() => {
 
   const filterDealers = () => {
     const query = String(state.searchInput?.value || '').trim().toLowerCase();
-    const statusFilterValue =
-      String(state.statusFilter?.value || 'all').toLowerCase();
-
     const filtered = state.dealers.filter((dealer) => {
       const matchesSearch =
         !query ||
@@ -168,27 +138,21 @@ const dealerListStore = (() => {
             String(field).toLowerCase().includes(query.toLowerCase())
           );
 
-      const normalizedStatus = normalizeStatusValue(dealer?.status);
-      const matchesStatus =
-        statusFilterValue === 'all' || normalizedStatus === statusFilterValue;
-
-      return matchesSearch && matchesStatus;
+      return matchesSearch;
     });
 
     renderDealers(filtered);
   };
 
-  const init = ({ listEl, searchInput, statusFilter }) => {
+  const init = ({ listEl, searchInput }) => {
     state.listEl = listEl || null;
     state.searchInput = searchInput || null;
-    state.statusFilter = statusFilter || null;
 
     state.searchInput?.addEventListener('input', filterDealers);
-    state.statusFilter?.addEventListener('change', filterDealers);
   };
 
   const setDealers = (dealers = [], { persist = true } = {}) => {
-    state.dealers = Array.isArray(dealers) ? dealers.slice().reverse() : [];
+    state.dealers = Array.isArray(dealers) ? dealers.slice() : [];
     if (persist) {
       writeCache(state.dealers);
     }
@@ -250,7 +214,6 @@ const dealerListStore = (() => {
     }
 
     const payload = await response.json();
-
     const dealers = extractDealers(payload);
     setDealers(dealers);
     return dealers;

@@ -1,0 +1,357 @@
+x-generator: NSwag v14.6.3.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))
+swagger: '2.0'
+info:
+  title: My Title
+  version: 1.0.0
+host: 57.131.25.31:8080
+schemes:
+  - http
+paths:
+  /auctions:
+    get:
+      operationId: GetAuctions
+      responses:
+        '200':
+          description: ''
+  /cities/{auctionId}:
+    get:
+      operationId: GetCities
+      parameters:
+        - type: integer
+          name: auctionId
+          in: path
+          required: true
+          format: int32
+          x-nullable: false
+      responses:
+        '200':
+          description: ''
+  /vehicletypes:
+    get:
+      operationId: GetVehicletypes
+      produces:
+        - application/json
+      responses:
+        '200':
+          x-nullable: false
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VehicleType'
+  /ports:
+    get:
+      operationId: GetPorts
+      produces:
+        - application/json
+      responses:
+        '200':
+          x-nullable: false
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Port'
+  /calculatetransportingprice/{auctionId}/{cityId}/{portId}/{vehicleTypeId}:
+    get:
+      operationId: GetCalculatetransportingprice
+      parameters:
+        - type: integer
+          name: auctionId
+          in: path
+          required: true
+          format: int32
+          x-nullable: false
+        - type: integer
+          name: cityId
+          in: path
+          required: true
+          format: int32
+          x-nullable: false
+        - type: integer
+          name: portId
+          in: path
+          required: true
+          format: int32
+          x-nullable: false
+        - type: integer
+          name: vehicleTypeId
+          in: path
+          required: true
+          format: int32
+          x-nullable: false
+      responses:
+        '200':
+          description: ''
+  /cars:
+    get:
+      operationId: GetCars
+      responses:
+        '200':
+          description: ''
+    post:
+      operationId: PostCars
+      consumes:
+        - application/json
+      parameters:
+        - name: car
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Car'
+          x-nullable: false
+      responses:
+        '200':
+          description: ''
+  /registerdealer:
+    post:
+      operationId: PostRegisterdealer
+      consumes:
+        - application/json
+      parameters:
+        - name: dealer
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Dealer'
+          x-nullable: false
+      responses:
+        '200':
+          description: ''
+  /dealers:
+    get:
+      operationId: GetDealers
+      responses:
+        '200':
+          description: ''
+  /loginadmin:
+    post:
+      operationId: PostLoginadmin
+      consumes:
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      parameters:
+        - type: string
+          name: login
+          in: query
+          required: true
+          x-nullable: false
+        - type: string
+          name: password
+          in: query
+          required: true
+          x-nullable: false
+      responses:
+        '200':
+          description: ''
+  /carphotos:
+    post:
+      operationId: PostCarphotos
+      parameters:
+        - type: integer
+          name: carId
+          in: query
+          required: true
+          format: int32
+          x-nullable: false
+        - type: integer
+          name: type
+          in: query
+          required: true
+          x-schema:
+            $ref: '#/definitions/CarPhotoType'
+          x-nullable: false
+          enum:
+            - 0
+            - 1
+            - 2
+      responses:
+        '200':
+          description: ''
+  /logindealer:
+    post:
+      operationId: PostLogindealer
+      consumes:
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      parameters:
+        - type: string
+          name: username
+          in: query
+          required: true
+          x-nullable: false
+        - type: string
+          name: password
+          in: query
+          required: true
+          x-nullable: false
+      responses:
+        '200':
+          description: ''
+definitions:
+  VehicleType:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+  Port:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+  Dealer:
+    type: object
+    required:
+      - id
+      - name
+      - username
+      - passwordHash
+      - contactNumber
+      - address
+      - status
+      - cars
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      username:
+        type: string
+      passwordHash:
+        type: string
+      contactNumber:
+        type: string
+      address:
+        type: string
+      status:
+        $ref: '#/definitions/DealerStatus'
+      cars:
+        type: array
+        items:
+          $ref: '#/definitions/Car'
+  DealerStatus:
+    type: integer
+    description: ''
+    x-enumNames:
+      - Inactive
+      - Active
+    enum:
+      - 0
+      - 1
+  Car:
+    type: object
+    required:
+      - id
+      - manufacturer
+      - model
+      - vin
+      - manufacturedYear
+      - transportingPrice
+      - auctionPrice
+      - lotNumber
+      - purchaseDate
+      - estimatedArrivalDate
+      - containerCode
+      - transporterLine
+      - carOwner
+      - carOwnerId
+      - vehicleType
+      - vehicleTypeId
+      - destinationPort
+      - destinationPortId
+      - carPhotos
+    properties:
+      id:
+        type: integer
+        format: int32
+      manufacturer:
+        type: string
+      model:
+        type: string
+      vin:
+        type: string
+      manufacturedYear:
+        type: integer
+        format: int32
+      transportingPrice:
+        type: number
+        format: decimal
+      auctionPrice:
+        type: number
+        format: decimal
+      lotNumber:
+        type: string
+      purchaseDate:
+        type: string
+        format: date
+      estimatedArrivalDate:
+        type: string
+        format: date
+      containerCode:
+        type: string
+      transporterLine:
+        type: string
+      carOwner:
+        $ref: '#/definitions/Dealer'
+      carOwnerId:
+        type: integer
+        format: int32
+      vehicleType:
+        $ref: '#/definitions/VehicleType'
+      vehicleTypeId:
+        type: integer
+        format: int32
+      destinationPort:
+        $ref: '#/definitions/Port'
+      destinationPortId:
+        type: integer
+        format: int32
+      carPhotos:
+        type: array
+        items:
+          $ref: '#/definitions/CarPhoto'
+  CarPhoto:
+    type: object
+    required:
+      - id
+      - car
+      - carId
+      - photoUrl
+      - photoType
+    properties:
+      id:
+        type: integer
+        format: int32
+      car:
+        $ref: '#/definitions/Car'
+      carId:
+        type: integer
+        format: int32
+      photoUrl:
+        type: string
+      photoType:
+        $ref: '#/definitions/CarPhotoType'
+  CarPhotoType:
+    type: integer
+    description: ''
+    x-enumNames:
+      - Purchasing
+      - Loading
+      - Arriving
+    enum:
+      - 0
+      - 1
+      - 2

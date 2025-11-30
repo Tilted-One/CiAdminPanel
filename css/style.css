@@ -19,6 +19,32 @@
   --transition-speed: 0.3s;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 999px;
+  border: 2px solid rgba(15, 23, 42, 0.6);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.6);
+  border-color: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 *,
 *::before,
 *::after {
@@ -529,7 +555,7 @@ nav {
 
 .filter-bar {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 1rem;
   padding: 1rem 1.2rem;
   margin-bottom: 1.5rem;
@@ -580,7 +606,7 @@ nav {
 
 .dealer-table-header {
   display: grid;
-  grid-template-columns: 2.6fr 1.6fr 1.2fr 1.4fr;
+  grid-template-columns: 2.6fr 1.6fr 1.4fr;
   gap: 0.75rem;
   padding-bottom: 0.55rem;
   margin-bottom: 0.6rem;
@@ -603,7 +629,7 @@ nav {
 
 .dealer-row {
   display: grid;
-  grid-template-columns: 2.6fr 1.6fr 1.2fr 1.4fr;
+  grid-template-columns: 2.6fr 1.6fr 1.4fr;
   gap: 0.75rem;
   align-items: center;
   padding: 0.65rem 0.45rem;
@@ -644,40 +670,11 @@ nav {
   color: var(--text-muted);
 }
 
-.dealer-status {
-  display: flex;
-  align-items: center;
-}
-
 .dealer-row-actions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.35rem;
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.7rem;
-  border-radius: 5px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.status-active {
-  background: rgba(16, 185, 129, 0.16);
-  color: #6ee7b7;
-  border: 1px solid rgba(16, 185, 129, 0.45);
-}
-
-.status-inactive {
-  background: rgba(148, 163, 184, 0.12);
-  color: #e5e7eb;
-  border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
 .dealer-actions {
@@ -800,10 +797,6 @@ nav {
     grid-template-rows: auto auto;
   }
 
-  .dealer-status {
-    justify-content: flex-start;
-  }
-
   .dealer-actions {
     justify-content: flex-start;
   }
@@ -823,7 +816,6 @@ nav {
   }
 
   .filter-bar {
-    grid-template-columns: 1fr;
   }
 
   .modal-content {
@@ -857,20 +849,6 @@ nav {
 
 .hidden {
   display: none;
-}
-
-.dealer-status-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.2rem;
-}
-
-.dealer-status-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
 }
 
 .dealer-phone-line {
@@ -951,11 +929,23 @@ nav {
 }
 
 .car-img-placeholder {
-  background: linear-gradient(
-      135deg,
-      rgba(59, 130, 246, 0.25),
-      rgba(6, 182, 212, 0.25)
-    );
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+.no-image-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  user-select: none;
 }
 
 .car-image-upload-row {
@@ -1028,6 +1018,17 @@ nav {
 
 .car-detail-image-upload-inner input[type='file'] {
   display: none;
+}
+
+.photo-section-title {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.photo-section-group {
+  margin-bottom: 2rem;
 }
 
 .car-detail-image-thumb-img {
@@ -1374,7 +1375,9 @@ nav {
   }
 }
 
-
-
-
+/* Required field indicator */
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
 

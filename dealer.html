@@ -53,12 +53,6 @@
             <p class="dealer-total-label">Total Vehicles</p>
             <h2 id="dealer-total-count" class="dealer-total-count">0</h2>
           </div>
-          <div class="dealer-status-wrapper">
-            <span class="dealer-status-label">Status</span>
-            <span id="dealer-status-pill" class="status-pill status-active">
-              Active
-            </span>
-          </div>
         </div>
       </div>
 
@@ -101,107 +95,66 @@
           ×
         </button>
       </div>
-      <form id="car-form" class="modal-form" autocomplete="off" novalidate>
+      <form id="car-form" class="modal-form" autocomplete="off">
         <div class="modal-form-grid">
-          <!-- Basic info -->
+          <!-- Vehicle details -->
           <div class="form-row">
-            <label for="car-title">Car title</label>
-            <input id="car-title" type="text" placeholder="2019 BMW 330i xDrive" required />
-          </div>
-          <div class="form-row">
-            <label for="car-status">Status</label>
-            <select id="car-status">
-              <option value="purchasing">Purchasing</option>
-              <option value="loading">Loading</option>
-              <option value="arrived">Arrived</option>
-            </select>
-          </div>
-
-          <!-- Vehicle details (match CiProject dealer.html) -->
-          <div class="form-row">
-            <label for="car-make">Manufacturer</label>
+            <label for="car-make">Manufacturer <span class="required">*</span></label>
             <input id="car-make" type="text" placeholder="BMW" required />
           </div>
           <div class="form-row">
-            <label for="car-model">Model</label>
+            <label for="car-model">Model <span class="required">*</span></label>
             <input id="car-model" type="text" placeholder="330i xDrive" required />
           </div>
           <div class="form-row">
-            <label for="car-year">Manufactured year</label>
-            <input id="car-year" type="text" placeholder="2020" required />
+            <label for="car-year">Manufactured year <span class="required">*</span></label>
+            <input id="car-year" type="number" placeholder="2020" required />
           </div>
           <div class="form-row">
-            <label for="car-lot-number">Lot number</label>
+            <label for="car-lot-number">Lot number <span class="required">*</span></label>
             <input id="car-lot-number" type="text" placeholder="LOT-1234" required />
-          </div>
-
-          <!-- Logistics -->
-          <div class="form-row">
-            <label for="car-purchased-date">Purchased date</label>
-            <input
-              id="car-purchased-date"
-              type="text"
-              placeholder="2024-02-15"
-              required
-            />
-          </div>
-          <div class="form-row">
-            <label for="car-arrival-date">Est. arrival</label>
-            <input
-              id="car-arrival-date"
-              type="text"
-              placeholder="2024-04-10"
-              required
-            />
-          </div>
-          <div class="form-row">
-            <label for="car-container-number">Container number</label>
-            <input id="car-container-number" type="text" placeholder="MSKU1234567" required />
-          </div>
-          <div class="form-row">
-            <label for="car-shipping-line">Shipping line</label>
-            <input id="car-shipping-line" type="text" placeholder="Maersk" required />
-          </div>
-
-          <!-- Owner information -->
-          <div class="form-row">
-            <label for="car-owner-name">Owner full name</label>
-            <input id="car-owner-name" type="text" placeholder="John Doe" required />
-          </div>
-          <div class="form-row">
-            <label for="car-owner-phone">Owner phone</label>
-            <input id="car-owner-phone" type="text" placeholder="+1 555 000 0000" required />
-          </div>
-          <div class="form-row modal-form-wide">
-            <label for="car-owner-address">Owner address</label>
-            <input
-              id="car-owner-address"
-              type="text"
-              placeholder="123 Harbor St, Los Angeles, CA"
-              required
-            />
-          </div>
-
-          <!-- Financials -->
-          <div class="form-row">
-            <label for="car-price-auction">Auction price</label>
-            <input id="car-price-auction" type="text" placeholder="$18,500" required />
-          </div>
-          <div class="form-row">
-            <label for="car-price-transport">Transporting price</label>
-            <input id="car-price-transport" type="text" placeholder="$2,100" required />
           </div>
 
           <!-- VIN -->
           <div class="form-row modal-form-wide">
-            <label for="car-vin">VIN</label>
+            <label for="car-vin">VIN <span class="required">*</span></label>
             <input id="car-vin" type="text" placeholder="Enter VIN" required />
           </div>
 
-          <!-- Images -->
-          <div class="form-row modal-form-wide">
-            <label>Car images</label>
-            <div id="car-form-images-row" class="car-detail-images-row"></div>
+          <!-- Logistics -->
+          <div class="form-row">
+            <label for="car-purchased-date">Purchased date <span class="required">*</span></label>
+            <input
+              id="car-purchased-date"
+              type="date"
+              required
+            />
+          </div>
+          <div class="form-row">
+            <label for="car-arrival-date">Est. arrival <span class="required">*</span></label>
+            <input
+              id="car-arrival-date"
+              type="date"
+              required
+            />
+          </div>
+          <div class="form-row">
+            <label for="car-container-number">Container code <span class="required">*</span></label>
+            <input id="car-container-number" type="text" placeholder="MSKU1234567" required />
+          </div>
+          <div class="form-row">
+            <label for="car-shipping-line">Transporter line <span class="required">*</span></label>
+            <input id="car-shipping-line" type="text" placeholder="Maersk" required />
+          </div>
+
+          <!-- Financials -->
+          <div class="form-row">
+            <label for="car-price-auction">Auction price <span class="required">*</span></label>
+            <input id="car-price-auction" type="number" step="0.01" placeholder="18500" required />
+          </div>
+          <div class="form-row">
+            <label for="car-price-transport">Transporting price <span class="required">*</span></label>
+            <input id="car-price-transport" type="number" step="0.01" placeholder="2100" required />
           </div>
         </div>
 
@@ -228,15 +181,42 @@
       </div>
       <form id="car-detail-form" class="car-detail-form">
         <div class="car-detail-body">
-          <div id="car-detail-images-row" class="car-detail-images-row"></div>
+          <!-- Action Mode Section: Images & Status -->
+          <div id="detail-action-section">
+            <div class="detail-vin-row">
+              <label for="detail-status">Status</label>
+              <select id="detail-status" class="detail-input" style="margin-bottom: 1rem;">
+                <option value="0">Purchasing</option>
+                <option value="1">Loading</option>
+                <option value="2">Arrived</option>
+              </select>
+            </div>
 
-          <div class="detail-vin-row">
-            <label for="detail-vin">VIN</label>
-            <input id="detail-vin" type="text" class="detail-input" />
+            <div class="photo-section-group">
+              <h4 class="photo-section-title">Purchasing Photos</h4>
+              <div id="car-detail-images-row-0" class="car-detail-images-row"></div>
+            </div>
+
+            <div class="photo-section-group">
+              <h4 class="photo-section-title">Loading Photos</h4>
+              <div id="car-detail-images-row-1" class="car-detail-images-row"></div>
+            </div>
+
+            <div class="photo-section-group">
+              <h4 class="photo-section-title">Arrived Photos</h4>
+              <div id="car-detail-images-row-2" class="car-detail-images-row"></div>
+            </div>
           </div>
 
-          <div class="detail-group">
-            <h3 class="detail-group-title">Vehicle Details</h3>
+          <!-- Edit Mode Section: Information Fields -->
+          <div id="detail-info-section">
+            <div class="detail-vin-row">
+              <label for="detail-vin">VIN</label>
+              <input id="detail-vin" type="text" class="detail-input" />
+            </div>
+
+            <div class="detail-group">
+              <h3 class="detail-group-title">Vehicle Details</h3>
             <div class="detail-grid">
               <div class="detail-item">
                 <label>Manufacturer</label>
@@ -280,24 +260,6 @@
           </div>
 
           <div class="detail-group">
-            <h3 class="detail-group-title">Owner Information</h3>
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Full Name</label>
-                <input id="detail-owner" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Phone Number</label>
-                <input id="detail-phone" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item detail-item-wide">
-                <label>Address</label>
-                <input id="detail-address" type="text" class="detail-input" />
-              </div>
-            </div>
-          </div>
-
-          <div class="detail-group">
             <h3 class="detail-group-title">Financials</h3>
             <div class="detail-grid">
               <div class="detail-item">
@@ -319,8 +281,9 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="modal-footer">
+      <div class="modal-footer">
           <button
             id="car-detail-cancel"
             class="btn btn-ghost"
@@ -337,6 +300,8 @@
   </div>
 
 
+  <script src="js/car-api.js"></script>
+  <script src="js/car-photos-api.js"></script>
   <script src="js/dealer-detail.js"></script>
 </body>
 
