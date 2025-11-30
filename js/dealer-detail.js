@@ -46,6 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const carDetailImagesRow = document.getElementById('car-detail-images-row');
   const detailActionSection = document.getElementById('detail-action-section');
   const detailInfoSection = document.getElementById('detail-info-section');
+
+  // Delete Photo Modal elements
+  const deletePhotoModal = document.getElementById('delete-photo-modal');
+  const deletePhotoClose = document.getElementById('delete-photo-close');
+  const deletePhotoCancel = document.getElementById('delete-photo-cancel');
+  const deletePhotoConfirm = document.getElementById('delete-photo-confirm');
+  
+  let photoToDelete = null; // { id, type, index }
+
   const detailStatus = document.getElementById('detail-status');
   const detailVin = document.getElementById('detail-vin');
   const detailMake = document.getElementById('detail-make');
@@ -336,6 +345,25 @@ document.addEventListener('DOMContentLoaded', () => {
     detailImages = getCarImages(car);
     renderDetailImages();
 
+    // Fetch fresh photos from admin endpoint
+    if (window.carPhotosApi && window.carPhotosApi.getCarPhotos) {
+      window.carPhotosApi.getCarPhotos(car.id)
+        .then((data) => {
+          // The API might return an array directly or an object with data property
+          const photos = Array.isArray(data) ? data : (data.data || []);
+          
+          if (Array.isArray(photos)) {
+            detailImages = photos.map(p => ({
+              url: p.photoUrl,
+              id: p.id,
+              type: p.photoType
+            }));
+            renderDetailImages();
+          }
+        })
+        .catch(err => console.error('Failed to load fresh car photos:', err));
+    }
+
     setDetailText(detailMake, car.make);
     setDetailText(detailModel, car.model);
     setDetailText(detailYear, car.year);
@@ -429,7 +457,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = await response.json();
-      console.log('Cars API response:', data);
       
       let carsArray = [];
       if (Array.isArray(data)) {
@@ -573,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div class="car-card-actions" style="display: flex; gap: 8px; margin-top: 10px;">
                 <button type="button" class="btn btn-outline car-edit-mode-btn" style="flex: 1; padding: 6px;">Edit</button>
-                <button type="button" class="btn btn-primary car-action-btn" style="flex: 1; padding: 6px;">Action</button>
+                <button type="button" class="btn btn-primary car-action-btn" style="flex: 1; padding: 6px;">Photo</button>
               </div>
             </div>
           </div>
@@ -789,6 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const saveCarApi = window.carApi?.saveCar;
+    const updateCarApi = window.carEditApi?.updateCar;
     const uploadPhotoApi = window.carPhotosApi?.uploadCarPhoto;
 
     if (typeof saveCarApi !== 'function') {
@@ -798,8 +826,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // 1. Save car details (only in edit mode)
-      if (currentMode === 'edit') {
-        // await saveCarApi(updatedData);
+      if (currentMode === 'edit' && updateCarApi) {
+         await updateCarApi(updatedData);
       }
 
       // 2. Upload new photos
@@ -843,6 +871,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function openDeletePhotoModal(id, type, index) {
+    photoToDelete = { id, type, index };
+    deletePhotoModal.setAttribute('aria-hidden', 'false');
+    deletePhotoModal.classList.add('open');
+  }
+
+  function closeDeletePhotoModal() {
+    photoToDelete = null;
+    deletePhotoModal.classList.remove('open');
+    deletePhotoModal.setAttribute('aria-hidden', 'true');
+  }
+
   // Detail action section click handler for dynamic remove buttons and upload slots
   detailActionSection?.addEventListener('click', (event) => {
     const target = event.target;
@@ -857,8 +897,15 @@ document.addEventListener('DOMContentLoaded', () => {
         newDetailFiles.splice(index, 1);
         renderDetailImages();
       } else if (type === 'existing' && index >= 0 && index < detailImages.length) {
-        detailImages.splice(index, 1);
-        renderDetailImages();
+        // If it's an existing image (saved on server), confirm deletion
+        const img = detailImages[index];
+        if (img && img.id) {
+           openDeletePhotoModal(img.id, 'existing', index);
+        } else {
+           // Fallback if no ID (legacy or local only), just remove from UI array
+           detailImages.splice(index, 1);
+           renderDetailImages();
+        }
       }
     } else {
       // Check if clicked inside an upload slot
@@ -870,6 +917,40 @@ document.addEventListener('DOMContentLoaded', () => {
           input.click();
         }
       }
+    }
+  });
+
+  deletePhotoClose?.addEventListener('click', closeDeletePhotoModal);
+  deletePhotoCancel?.addEventListener('click', closeDeletePhotoModal);
+  
+  deletePhotoConfirm?.addEventListener('click', async () => {
+    if (!photoToDelete) return;
+
+    // Set loading state
+    const originalText = deletePhotoConfirm.textContent;
+    deletePhotoConfirm.disabled = true;
+    deletePhotoConfirm.textContent = 'Deleting';
+    
+    try {
+      const deleteApi = window.carPhotosDeleteApi?.deleteCarPhoto;
+      if (deleteApi && photoToDelete.type === 'existing') {
+         await deleteApi(photoToDelete.id);
+         
+         // Remove from local array
+         const idx = detailImages.findIndex(img => img.id === photoToDelete.id);
+         if (idx !== -1) {
+           detailImages.splice(idx, 1);
+         }
+         renderDetailImages();
+      }
+      closeDeletePhotoModal();
+    } catch (error) {
+      console.error('Failed to delete photo', error);
+      alert('Failed to delete photo');
+    } finally {
+      // Restore button state
+      deletePhotoConfirm.disabled = false;
+      deletePhotoConfirm.textContent = originalText;
     }
   });
 

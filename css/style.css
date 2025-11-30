@@ -708,6 +708,11 @@ nav {
   pointer-events: auto;
 }
 
+/* High z-index for delete confirmation modal to appear on top of detail modal */
+#delete-photo-modal {
+  z-index: 1200;
+}
+
 .modal-content {
   width: 100%;
   max-width: 560px;
@@ -779,7 +784,7 @@ nav {
   display: flex;
   justify-content: flex-end;
   gap: 0.55rem;
-  margin-top: 0.4rem;
+  margin-top: 1.5rem;
 }
 
 @media (max-width: 800px) {
@@ -813,9 +818,6 @@ nav {
 
   .dashboard-shell {
     padding-inline: 1rem;
-  }
-
-  .filter-bar {
   }
 
   .modal-content {

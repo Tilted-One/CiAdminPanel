@@ -1,10 +1,44 @@
 (function () {
   const PHOTO_ENDPOINT = 'http://57.131.25.31:8080/carphotos';
+  const PHOTO_ADMIN_ENDPOINT = 'http://57.131.25.31:8080/carphotosadmin';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
     return raw ? raw.replace(/"/g, '') : '';
   };
+
+  /**
+   * Get all photos for a car
+   * @param {number} carId
+   */
+  async function getCarPhotos(carId) {
+    const token = getToken();
+    if (!token) {
+      console.error('No token found');
+      return [];
+    }
+
+    try {
+      const response = await fetch(`${PHOTO_ADMIN_ENDPOINT}/${carId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to fetch photos: ${response.status}`);
+        return [];
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching car photos:', error);
+      return [];
+    }
+  }
 
   /**
    * Upload car photos
@@ -13,10 +47,7 @@
    * @param {File[]} files - Array of File objects
    */
   async function uploadCarPhoto(carId, type, files) {
-    console.log('--- Uploading Car Photos ---');
-    console.log('Car ID:', carId);
-    console.log('Type:', type);
-    console.log('Files:', files);
+   
 
     const token = getToken();
     if (!token) {
@@ -34,11 +65,8 @@
         formData.append('images', file);
       });
     }
-
-    console.log('FormData created. Sending POST request to:', PHOTO_ENDPOINT);
     // Log FormData entries for debugging
     for (let pair of formData.entries()) {
-      console.log(pair[0] + ', ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
     }
 
     try {
@@ -68,5 +96,6 @@
 
   window.carPhotosApi = window.carPhotosApi || {};
   window.carPhotosApi.uploadCarPhoto = uploadCarPhoto;
+  window.carPhotosApi.getCarPhotos = getCarPhotos;
 })();
 

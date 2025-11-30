@@ -170,6 +170,23 @@
     </div>
   </div>
 
+  <!-- Delete confirmation modal -->
+  <div id="delete-photo-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2>ფოტოს წაშლა</h2>
+        <button id="delete-photo-close" class="modal-close" type="button">×</button>
+      </div>
+      <div class="modal-body">
+        <p>დარწმუნებული ხართ რომ გსურთ ფოტოს წაშლა? ეს მოქმედება შეუქცევადია.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="delete-photo-cancel" class="btn btn-ghost" type="button">გაუქმება</button>
+        <button id="delete-photo-confirm" class="btn btn-primary" type="button" style="background-color: #ef4444; border-color: #ef4444;">წაშლა</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Car detail modal (now editable, shows same info structure as CiProject dealer.html) -->
   <div id="car-detail-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content modal-content-wide">
@@ -183,15 +200,7 @@
         <div class="car-detail-body">
           <!-- Action Mode Section: Images & Status -->
           <div id="detail-action-section">
-            <div class="detail-vin-row">
-              <label for="detail-status">Status</label>
-              <select id="detail-status" class="detail-input" style="margin-bottom: 1rem;">
-                <option value="0">Purchasing</option>
-                <option value="1">Loading</option>
-                <option value="2">Arrived</option>
-              </select>
-            </div>
-
+            
             <div class="photo-section-group">
               <h4 class="photo-section-title">Purchasing Photos</h4>
               <div id="car-detail-images-row-0" class="car-detail-images-row"></div>
@@ -210,6 +219,15 @@
 
           <!-- Edit Mode Section: Information Fields -->
           <div id="detail-info-section">
+            <div class="detail-vin-row">
+              <label for="detail-status">Status</label>
+              <select id="detail-status" class="detail-input">
+                <option value="0">Purchasing</option>
+                <option value="1">Loading</option>
+                <option value="2">Arrived</option>
+              </select>
+            </div>
+
             <div class="detail-vin-row">
               <label for="detail-vin">VIN</label>
               <input id="detail-vin" type="text" class="detail-input" />
@@ -301,7 +319,9 @@
 
 
   <script src="js/car-api.js"></script>
+  <script src="js/car-edit-api.js"></script>
   <script src="js/car-photos-api.js"></script>
+  <script src="js/car-photos-delete-api.js"></script>
   <script src="js/dealer-detail.js"></script>
 </body>
 
