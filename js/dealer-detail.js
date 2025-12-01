@@ -452,11 +452,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let images = [];
     let status = 'purchasing';
     
-    if (Array.isArray(apiCar.carPhotos) && apiCar.carPhotos.length) {
-      images = apiCar.carPhotos.map(photo => photo.photoUrl).filter(Boolean);
+    // Determine status from transportationState if available
+    if (apiCar.transportationState !== undefined && apiCar.transportationState !== null) {
+      const state = parseInt(apiCar.transportationState, 10);
+      if (state === 1) status = 'loading';
+      else if (state === 2) status = 'arrived';
+      // else 0 -> purchasing
+    } else if (Array.isArray(apiCar.carPhotos) && apiCar.carPhotos.length) {
       const types = apiCar.carPhotos.map(p => p.photoType);
       if (types.includes(2)) status = 'arrived';
       else if (types.includes(1)) status = 'loading';
+    }
+
+    if (Array.isArray(apiCar.carPhotos) && apiCar.carPhotos.length) {
+      images = apiCar.carPhotos.map(photo => photo.photoUrl).filter(Boolean);
     } else if (Array.isArray(apiCar.images)) {
       images = apiCar.images;
     } else if (apiCar.image) {
@@ -484,7 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
       vehicleTypeId: apiCar.vehicleTypeId,
       destinationPortId: apiCar.destinationPortId,
       transportationState: apiCar.transportationState, // from API
-      carPhotos: apiCar.carPhotos || [] // Keep original objects for reference
+      carPhotos: apiCar.carPhotos || [], // Keep original objects for reference
+      original: apiCar // Store full original object for PUT updates
     };
   }
 
@@ -892,10 +902,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const keptPhotos = detailImages.map(img => ({
       id: img.id || 0,
       photoUrl: img.url,
-      photoType: img.type || 0
+      photoType: img.type || 0,
+      carId: car.id
     }));
 
+    // Merge original car data with form updates to ensure full DTO
+    const originalCar = car.original || {};
+    
     const updatedData = {
+      ...originalCar, // Start with full original data
       id: car.id,
       manufacturer: String(detailMake?.value || '').trim(),
       model: String(detailModel?.value || '').trim(),
@@ -908,15 +923,17 @@ document.addEventListener('DOMContentLoaded', () => {
       transporterLine: String(detailShipping?.value || '').trim(),
       auctionPrice: String(detailPriceAuction?.value || '').trim(),
       transportingPrice: String(detailPriceTransport?.value || '').trim(),
-      carOwnerId: car.carOwnerId,
-      vehicleTypeId: car.vehicleTypeId,
-      destinationPortId: car.destinationPortId,
-      status: statusVal,
+      // Ensure IDs are present (fallback to existing or 0/1)
+      carOwnerId: originalCar.carOwnerId || car.carOwnerId || 0,
+      vehicleTypeId: originalCar.vehicleTypeId || car.vehicleTypeId || 1,
+      destinationPortId: originalCar.destinationPortId || car.destinationPortId || 1,
+      status: statusVal, // This will be mapped to transportationState in API wrapper
+      transportationState: statusVal,
       carPhotos: keptPhotos 
     };
 
     const saveCarApi = window.carApi?.saveCar;
-    const updateCarApi = window.carEditApi?.updateCar;
+    const updateCarApi = window.carUpdateApi?.updateCar;
     const uploadPhotoApi = window.carPhotosApi?.uploadCarPhoto;
 
     if (typeof saveCarApi !== 'function') {
