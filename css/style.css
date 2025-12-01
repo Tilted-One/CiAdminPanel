@@ -72,7 +72,7 @@ body.login-page {
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 10px;
   box-shadow: var(--glass-shadow);
 }
 
@@ -1066,7 +1066,7 @@ nav {
   top: 1rem;
   right: 1rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 50px;
+  border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;

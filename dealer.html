@@ -221,11 +221,16 @@
           <div id="detail-info-section">
             <div class="detail-vin-row">
               <label for="detail-status">Status</label>
-              <select id="detail-status" class="detail-input">
-                <option value="0">Purchasing</option>
-                <option value="1">Loading</option>
-                <option value="2">Arrived</option>
-              </select>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <select id="detail-status" class="detail-input" style="flex: 1;">
+                  <option value="0">Purchasing</option>
+                  <option value="1">Loading</option>
+                  <option value="2">Arrived</option>
+                </select>
+                <button id="update-status-btn" class="btn btn-primary" type="button" style="padding: 0.7rem 1rem; font-size: 0.8rem; margin-left: 10px;">
+                  Update Status
+                </button>
+              </div>
             </div>
 
             <div class="detail-vin-row">
@@ -322,6 +327,7 @@
   <script src="js/car-edit-api.js"></script>
   <script src="js/car-photos-api.js"></script>
   <script src="js/car-photos-delete-api.js"></script>
+  <script src="js/car-status-api.js"></script>
   <script src="js/dealer-detail.js"></script>
 </body>
 

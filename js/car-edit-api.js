@@ -47,7 +47,6 @@
       status: parseInteger(carData.status)
     };
 
-    console.log('Sending PUT request to /cars with payload:', payload);
 
     const response = await fetch(CARS_ENDPOINT, {
       method: 'PUT',

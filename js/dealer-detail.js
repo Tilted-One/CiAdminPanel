@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const detailShipping = document.getElementById('detail-shipping');
   const detailPriceAuction = document.getElementById('detail-price-auction');
   const detailPriceTransport = document.getElementById('detail-price-transport');
+  const updateStatusBtn = document.getElementById('update-status-btn');
 
   const params = new URLSearchParams(window.location.search);
   const dealerId = params.get('dealerId');
@@ -309,8 +310,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actually, I'll just let the global click listener handle it if I update logic there
   }
 
+  // --- Accessibility & Focus Management Variables ---
+  let lastFocusedElement = null;
+
+  function trapFocus(modal) {
+    const focusableElements = modal.querySelectorAll(
+      'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    modal.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    });
+    
+    // Focus the first element initially
+    if (firstElement) {
+      firstElement.focus();
+    }
+  }
+
   function openCarDetailModal(car, mode = 'edit') {
     if (!carDetailModal) return;
+    
+    // Store currently focused element to restore later
+    lastFocusedElement = document.activeElement;
+    
     currentMode = mode;
 
     if (mode === 'edit') {
@@ -377,21 +414,37 @@ document.addEventListener('DOMContentLoaded', () => {
     setDetailText(detailPriceAuction, car.priceAuction);
     setDetailText(detailPriceTransport, car.priceTransport);
 
-    let statusVal = '0';
-    const statusStr = (car.status || '').toLowerCase();
-    if (statusStr === 'loading') statusVal = '1';
-    if (statusStr === 'arrived') statusVal = '2';
+    if (car.transportationState !== undefined && car.transportationState !== null) {
+        statusVal = String(car.transportationState);
+    } else {
+        const statusStr = (car.status || '').toLowerCase();
+        if (statusStr === 'loading') statusVal = '1';
+        if (statusStr === 'arrived') statusVal = '2';
+    }
     if (detailStatus) detailStatus.value = statusVal;
 
     currentDetailCarId = car.id;
+    
+    // Make visible and accessible
+    carDetailModal.removeAttribute('inert');
     carDetailModal.setAttribute('aria-hidden', 'false');
     carDetailModal.classList.add('open');
+    
+    // Trap focus within modal
+    trapFocus(carDetailModal);
   }
 
   function closeCarDetailModal() {
     if (!carDetailModal) return;
+    
     carDetailModal.classList.remove('open');
     carDetailModal.setAttribute('aria-hidden', 'true');
+    carDetailModal.setAttribute('inert', '');
+    
+    // Restore focus to the button that opened the modal
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+    }
   }
 
   // Normalize car data from API to internal format
@@ -430,6 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
       carOwnerId: apiCar.carOwnerId,
       vehicleTypeId: apiCar.vehicleTypeId,
       destinationPortId: apiCar.destinationPortId,
+      transportationState: apiCar.transportationState, // from API
       carPhotos: apiCar.carPhotos || [] // Keep original objects for reference
     };
   }
@@ -543,7 +597,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     carGridEl.innerHTML = filtered
       .map((car) => {
-        const status = (car.status || 'purchasing').toLowerCase();
+        let status = 'purchasing';
+        if (car.transportationState !== undefined && car.transportationState !== null) {
+             // Use transportationState if available: 0=Purchasing, 1=Loading, 2=Arrived
+             const state = parseInt(car.transportationState, 10);
+             if (state === 1) status = 'loading';
+             else if (state === 2) status = 'arrived';
+             // else 0 or other -> purchasing
+        } else {
+            // Fallback to old logic
+            status = (car.status || 'purchasing').toLowerCase();
+        }
+
         let statusLabel = 'Purchasing';
         if (status === 'loading') statusLabel = 'Loading';
         if (status === 'arrived') statusLabel = 'Arrived';
@@ -771,6 +836,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   carForm.addEventListener('submit', handleCarFormSubmit);
+
+  updateStatusBtn?.addEventListener('click', async () => {
+    if (!currentDetailCarId) return;
+    const statusVal = detailStatus ? parseInt(detailStatus.value, 10) : 0;
+    
+    const originalText = updateStatusBtn.textContent;
+    updateStatusBtn.disabled = true;
+    updateStatusBtn.textContent = '...';
+    
+    const updateStatusApi = window.carStatusApi?.updateCarStatus;
+    if (updateStatusApi) {
+      try {
+        await updateStatusApi(currentDetailCarId, statusVal);
+        
+        // Refresh data
+        cars = await fetchCarsFromApi(dealerId);
+        renderCars();
+        
+        // Optional: show success feedback briefly?
+        updateStatusBtn.textContent = 'Done';
+        setTimeout(() => {
+           updateStatusBtn.textContent = originalText;
+           updateStatusBtn.disabled = false;
+        }, 1000);
+      } catch (error) {
+        console.error('Failed to update status', error);
+        alert('Failed to update status');
+        updateStatusBtn.textContent = originalText;
+        updateStatusBtn.disabled = false;
+      }
+    } else {
+       console.error('Status API not found');
+       updateStatusBtn.disabled = false;
+    }
+  });
 
   // Detail modal form handlers
   carDetailForm?.addEventListener('submit', async (event) => {
