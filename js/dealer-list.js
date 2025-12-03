@@ -109,7 +109,8 @@ const dealerListStore = (() => {
         </div>
         <span class="dealer-phone">${phone}</span>
         <div class="dealer-row-actions">
-          <button type="button" class="btn btn-ghost dealer-delete-btn">წაშლა</button>
+          <button type="button" class="btn btn-ghost dealer-edit-btn">რედაქტირება</button>
+          <button type="button" class="btn btn-ghost dealer-delete-btn" style="color: #ef4444; border-color: #ef4444;">წაშლა</button>
         </div>
       `;
 

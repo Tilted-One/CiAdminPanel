@@ -19,7 +19,11 @@
   --transition-speed: 0.3s;
 }
 
-/* Custom Scrollbar */
+  /* Custom Scrollbar */
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -577,6 +581,7 @@ nav {
 .filter-group input,
 .filter-group select {
   padding: 0.7rem 0.8rem;
+  padding-right: 2rem; /* Make room for dropdown arrow */
   border-radius: 0.5rem;
   border: 1px solid rgba(148, 163, 184, 0.6);
   background: rgba(15, 23, 42, 0.9);
@@ -698,14 +703,22 @@ nav {
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--transition-speed) ease;
+  transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
   z-index: 1100;
 }
 
 .modal-overlay.open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+}
+
+/* Ensure hidden modals never block interactions */
+.modal-overlay:not(.open) {
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 /* High z-index for delete confirmation modal to appear on top of detail modal */
@@ -787,6 +800,56 @@ nav {
   margin-top: 1.5rem;
 }
 
+/* Bootstrap Modal Overrides - Ensure modal appears above all content */
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+  background-color: rgba(3, 7, 18, 0.86) !important;
+}
+
+.modal.show {
+  display: block !important;
+}
+
+/* Ensure Bootstrap modal content is visible */
+#editDealerModal {
+  z-index: 1055 !important;
+}
+
+#editDealerModal .modal-dialog {
+  z-index: 1055 !important;
+}
+
+#editDealerModal .modal-content {
+  background: var(--bg-secondary) !important;
+  border: 1px solid rgba(148, 163, 184, 0.4) !important;
+  color: var(--text-main) !important;
+}
+
+#editDealerModal .form-control {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.3) !important;
+  color: var(--text-main) !important;
+}
+
+#editDealerModal .form-control:focus {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+#editDealerModal .form-label {
+  color: var(--text-main) !important;
+}
+
+#editDealerModal .btn-close {
+  filter: invert(1) !important;
+}
+
 @media (max-width: 800px) {
   .page-header {
     flex-direction: column;
@@ -840,7 +903,7 @@ nav {
 
 .dealer-error-card {
   padding: 2.2rem 2.3rem 2rem;
-  margin-top: 2rem;
+  margin-top: 10rem;
   text-align: left;
 }
 

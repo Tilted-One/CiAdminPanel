@@ -6,9 +6,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const dealerContentSection = document.getElementById('dealer-content');
 
   const dealerNameHeading = document.getElementById('dealer-name-heading');
-  const dealerEmailLine = document.getElementById('dealer-email-line');
+  const dealerUsernameLine = document.getElementById('dealer-username-line');
   const dealerPhoneLine = document.getElementById('dealer-phone-line');
+  const dealerAddressLine = document.getElementById('dealer-address-line');
   const dealerTotalCountEl = document.getElementById('dealer-total-count');
+
+  // Edit Dealer & Reset Password Elements
+  const resetPasswordBtn = document.getElementById('reset-password-btn');
+
+  const editDealerModal = document.getElementById('edit-dealer-modal');
+  const editDealerClose = document.getElementById('edit-dealer-close');
+  const editDealerCancel = document.getElementById('edit-dealer-cancel');
+  const editDealerForm = document.getElementById('edit-dealer-form');
+  const editDealerNameInput = document.getElementById('edit-dealer-name');
+  const editDealerUsernameInput = document.getElementById('edit-dealer-username');
+  const editDealerPhoneInput = document.getElementById('edit-dealer-phone');
+  const editDealerAddressInput = document.getElementById('edit-dealer-address');
+  const editDealerError = document.getElementById('edit-dealer-error');
+
+  const resetPasswordModal = document.getElementById('reset-password-modal');
+  const resetPasswordClose = document.getElementById('reset-password-close');
+  const resetPasswordCancel = document.getElementById('reset-password-cancel');
+  const resetPasswordForm = document.getElementById('reset-password-form');
+  const newPasswordInput = document.getElementById('new-password');
+  const confirmPasswordInput = document.getElementById('confirm-password');
+  const resetPasswordError = document.getElementById('reset-password-error');
 
   const logoutBtn = document.getElementById('logout-btn');
 
@@ -46,6 +68,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const carDetailImagesRow = document.getElementById('car-detail-images-row');
   const detailActionSection = document.getElementById('detail-action-section');
   const detailInfoSection = document.getElementById('detail-info-section');
+
+  // Car Delete Modal elements
+  const deleteCarModal = document.getElementById('delete-car-modal');
+  const deleteCarClose = document.getElementById('delete-car-close');
+  const deleteCarCancel = document.getElementById('delete-car-cancel');
+  const deleteCarConfirm = document.getElementById('delete-car-confirm');
+  
+  let carToDeleteId = null;
+
+  function openDeleteCarModal(carId) {
+    carToDeleteId = carId;
+    deleteCarModal.setAttribute('aria-hidden', 'false');
+    deleteCarModal.classList.add('open');
+  }
+
+  function closeDeleteCarModal() {
+    carToDeleteId = null;
+    deleteCarModal.classList.remove('open');
+    deleteCarModal.setAttribute('aria-hidden', 'true');
+  }
+
+  deleteCarClose?.addEventListener('click', closeDeleteCarModal);
+  deleteCarCancel?.addEventListener('click', closeDeleteCarModal);
+
+  deleteCarConfirm?.addEventListener('click', async () => {
+    if (!carToDeleteId) return;
+
+    const originalText = deleteCarConfirm.textContent;
+    deleteCarConfirm.disabled = true;
+    deleteCarConfirm.textContent = 'Deleting...';
+
+    const deleteApi = window.carDeleteApi?.deleteCar;
+    if (!deleteApi) {
+      console.error('Delete API not found');
+      alert('Delete API not found. Please refresh.');
+      deleteCarConfirm.disabled = false;
+      deleteCarConfirm.textContent = originalText;
+      return;
+    }
+
+    try {
+      await deleteApi(carToDeleteId);
+      // Refresh list
+      cars = await fetchCarsFromApi(dealerId);
+      renderCars();
+      closeDeleteCarModal();
+    } catch (error) {
+      console.error('Failed to delete car', error);
+      alert(error instanceof Error ? error.message : 'Failed to delete car');
+    } finally {
+      deleteCarConfirm.disabled = false;
+      deleteCarConfirm.textContent = originalText;
+    }
+  });
 
   // Delete Photo Modal elements
   const deletePhotoModal = document.getElementById('delete-photo-modal');
@@ -85,6 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const raw = localStorage.getItem('token');
     return raw ? raw.replace(/"/g, '') : null;
   };
+
+  // Check token immediately
+  if (!getToken()) {
+    window.location.href = 'index.html';
+    return;
+  }
 
   const getCachedDealers = () => {
     try {
@@ -414,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setDetailText(detailPriceAuction, car.priceAuction);
     setDetailText(detailPriceTransport, car.priceTransport);
 
+    let statusVal = '0'; // Default to Purchasing
     if (car.transportationState !== undefined && car.transportationState !== null) {
         statusVal = String(car.transportationState);
     } else {
@@ -553,10 +636,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     dealerNameHeading.textContent = dealer.name || 'Dealer';
-    dealerEmailLine.textContent = dealer.email || dealer.username || '-';
+    
+    if (dealerUsernameLine) {
+       dealerUsernameLine.textContent = dealer.username ? `@${dealer.username}` : '';
+    }
+
 
     if (dealerPhoneLine) {
       dealerPhoneLine.textContent = dealer.phone || dealer.phoneNumber || dealer.contactNumber || dealer.contact_number || '-';
+    }
+
+    if (dealerAddressLine) {
+       dealerAddressLine.textContent = dealer.address || '-';
     }
 
     showDealerView();
@@ -660,9 +751,10 @@ document.addEventListener('DOMContentLoaded', () => {
                   : status === 'loading'
                   ? 'loading'
                   : 'transit'
-              }">
+              }" style="left: 1rem; right: auto;">
                 ${statusLabel}
               </div>
+              <button type="button" class="car-delete-btn-overlay" title="Delete Car" style="position: absolute; top: 1rem; right: 1rem; z-index: 10; background: rgba(239, 68, 68, 0.9); border: none; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-weight: 600;  letter-spacing: 0.05em;">Delete</button>
               ${imageHtml}
             </div>
             <div class="car-details">
@@ -1071,6 +1163,146 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Edit Dealer Modal Logic
+  function openEditDealerModal() {
+    if (!dealer) return;
+    editDealerNameInput.value = dealer.name || '';
+    editDealerUsernameInput.value = dealer.username || '';
+    editDealerPhoneInput.value = dealer.phone || dealer.contactNumber || dealer.phoneNumber || '';
+    editDealerAddressInput.value = dealer.address || '';
+    editDealerError.textContent = '';
+    
+    editDealerModal.setAttribute('aria-hidden', 'false');
+    editDealerModal.classList.add('open');
+  }
+
+  function closeEditDealerModal() {
+    editDealerModal.classList.remove('open');
+    editDealerModal.setAttribute('aria-hidden', 'true');
+  }
+
+  const editDealerBtn = document.getElementById('edit-dealer-btn');
+  editDealerBtn?.addEventListener('click', openEditDealerModal);
+  editDealerClose?.addEventListener('click', closeEditDealerModal);
+  editDealerCancel?.addEventListener('click', closeEditDealerModal);
+
+  editDealerModal?.addEventListener('click', (event) => {
+    if (event.target === editDealerModal) {
+      closeEditDealerModal();
+    }
+  });
+
+  editDealerForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!dealer) {
+      editDealerError.textContent = 'Dealer information not available. Please refresh the page.';
+      return;
+    }
+
+    const name = String(editDealerNameInput.value || '').trim();
+    const username = String(editDealerUsernameInput.value || '').trim();
+    const contactNumber = String(editDealerPhoneInput.value || '').trim();
+    const address = String(editDealerAddressInput.value || '').trim();
+
+    if (!name || !username) {
+      editDealerError.textContent = 'Name and Username are required.';
+      return;
+    }
+
+    editDealerError.textContent = '';
+
+    // Get the actual dealer ID from dealer object (prefer numeric ID)
+    const actualDealerId = dealer.id || dealer.dealerId || dealerId;
+    if (!actualDealerId) {
+      editDealerError.textContent = 'Dealer ID not found. Please refresh the page.';
+      return;
+    }
+
+    const updateApi = window.dealerUpdateApi?.updateDealer;
+    if (!updateApi) {
+      editDealerError.textContent = 'Update API unavailable. Please refresh the page.';
+      return;
+    }
+
+    try {
+      // Send PUT request with the exact format specified
+      await updateApi(actualDealerId, {
+        name: name,
+        username: username,
+        contactNumber: contactNumber, // Use contactNumber to match API format
+        address: address,
+        existingDealer: dealer,
+      });
+
+      // Update local dealer object
+      dealer.name = name;
+      dealer.username = username;
+      dealer.phone = contactNumber;
+      dealer.contactNumber = contactNumber;
+      dealer.address = address;
+
+      // Update UI
+      dealerNameHeading.textContent = dealer.name || 'Dealer';
+      if (dealerUsernameLine) {
+        dealerUsernameLine.textContent = dealer.username ? `@${dealer.username}` : '';
+      }
+      if (dealerPhoneLine) {
+        dealerPhoneLine.textContent = dealer.contactNumber || dealer.phone || '-';
+      }
+      if (dealerAddressLine) {
+        dealerAddressLine.textContent = dealer.address || '-';
+      }
+
+      // Update cache if it exists
+      const cachedDealers = getCachedDealers();
+      const dealerIndex = cachedDealers.findIndex((d) => getDealerId(d) === dealerId);
+      if (dealerIndex !== -1) {
+        cachedDealers[dealerIndex] = { ...cachedDealers[dealerIndex], ...dealer };
+        sessionStorage.setItem(DEALER_CACHE_KEY, JSON.stringify(cachedDealers));
+      }
+
+      closeEditDealerModal();
+    } catch (error) {
+      console.error('Failed to update dealer', error);
+      editDealerError.textContent = error instanceof Error ? error.message : 'Failed to update dealer.';
+    }
+  });
+
+  // Reset Password Modal Logic
+  function openResetPasswordModal() {
+    newPasswordInput.value = '';
+    confirmPasswordInput.value = '';
+    resetPasswordError.textContent = '';
+    resetPasswordModal.setAttribute('aria-hidden', 'false');
+    resetPasswordModal.classList.add('open');
+  }
+
+  function closeResetPasswordModal() {
+    resetPasswordModal.classList.remove('open');
+    resetPasswordModal.setAttribute('aria-hidden', 'true');
+  }
+
+  resetPasswordBtn?.addEventListener('click', openResetPasswordModal);
+  resetPasswordClose?.addEventListener('click', closeResetPasswordModal);
+  resetPasswordCancel?.addEventListener('click', closeResetPasswordModal);
+
+  resetPasswordForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const newPass = newPasswordInput.value;
+    const confirmPass = confirmPasswordInput.value;
+
+    if (newPass !== confirmPass) {
+      resetPasswordError.textContent = 'Passwords do not match.';
+      return;
+    }
+
+    // TODO: Implement API call to reset password
+    alert('Reset password functionality to be implemented');
+    closeResetPasswordModal();
+  });
+
   carGridEl?.addEventListener('click', (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
@@ -1087,6 +1319,39 @@ document.addEventListener('DOMContentLoaded', () => {
       if (car) openCarDetailModal(car, 'edit');
     } else if (target.classList.contains('car-action-btn')) {
       if (car) openCarDetailModal(car, 'action');
+    } else if (target.classList.contains('car-delete-btn-overlay')) {
+       // Prevent card click event
+       event.stopPropagation();
+       
+       const card = target.closest('.car-card');
+       if (card) {
+         const id = card.getAttribute('data-id');
+         if (id) {
+           openDeleteCarModal(id);
+         }
+       }
+    }
+  });
+
+  // Function to close all modals
+  function closeAllModals() {
+    const allModals = document.querySelectorAll('.modal-overlay');
+    allModals.forEach(modal => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    });
+  }
+
+  // Initialize: Ensure all modals are closed on page load
+  closeAllModals();
+
+  // Global ESC key handler to close any open modal
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      const openModal = document.querySelector('.modal-overlay.open');
+      if (openModal) {
+        closeAllModals();
+      }
     }
   });
 

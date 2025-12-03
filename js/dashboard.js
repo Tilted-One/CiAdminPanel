@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Check token immediately
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'index.html';
+    return;
+  }
+
   const logoutBtn = document.getElementById('logout-btn');
   const dealerListEl = document.getElementById('dealer-list');
   const searchInput = document.getElementById('dealer-search');
@@ -11,11 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const dealerForm = document.getElementById('dealer-form');
   const dealerFormError = document.getElementById('dealer-form-error');
 
+  const deleteDealerModal = document.getElementById('delete-dealer-modal');
+  const deleteDealerClose = document.getElementById('delete-dealer-close');
+  const deleteDealerCancel = document.getElementById('delete-dealer-cancel');
+  const deleteDealerConfirm = document.getElementById('delete-dealer-confirm');
+  let dealerToDeleteId = null;
+
   const dealerNameInput = document.getElementById('dealer-name');
   const dealerPhoneInput = document.getElementById('dealer-phone');
   const dealerAddressInput = document.getElementById('dealer-address');
   const dealerUsernameInput = document.getElementById('dealer-username');
-  const dealerPasswordInput = document.getElementById('dealer-password');
 
   const dealerListStore = window.dealerListStore;
   if (!dealerListStore) {
@@ -35,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     dealerNameInput.classList.remove('error');
 
     if (mode === 'edit' && dealer) {
-      editDealerId = dealer.id;
+      editDealerId = dealer.id || dealer.dealerId || dealer.uuid;
       dealerModalTitle.textContent = 'დილერის რედაქტირება';
       dealerNameInput.value = dealer.name || '';
-      dealerPhoneInput.value = dealer.phone || '';
+      // Map phone field - API uses contactNumber, UI uses phone
+      dealerPhoneInput.value = dealer.phone || dealer.contactNumber || dealer.phoneNumber || '';
       dealerAddressInput.value = dealer.address || '';
-      dealerUsernameInput.value = dealer.username || '';
-      dealerPasswordInput.value = dealer.password || '';
+      dealerUsernameInput.value = dealer.username || dealer.login || '';
     } else {
       editDealerId = null;
       dealerModalTitle.textContent = 'ახალი დილერი';
@@ -49,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dealerPhoneInput.value = '';
       dealerAddressInput.value = '';
       dealerUsernameInput.value = '';
-      dealerPasswordInput.value = '';
     }
 
     dealerModal.setAttribute('aria-hidden', 'false');
@@ -70,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const phone = String(dealerPhoneInput.value || '').trim();
     const address = String(dealerAddressInput.value || '').trim();
     const username = String(dealerUsernameInput.value || '').trim();
-    const password = String(dealerPasswordInput.value || '').trim();
 
     if (!name) {
       dealerFormError.textContent = 'დასახელება სავალდებულოა.';
@@ -83,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
       phone,
       address,
       username,
-      password,
     };
 
     if (!editDealerId) {
@@ -105,12 +114,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
       await dealerListStore.load({ showLoadingState: false });
     } else {
+      const apiUpdate = window.dealerUpdateApi?.updateDealer;
+      if (typeof apiUpdate !== 'function') {
+        dealerFormError.textContent =
+          'Dealer update API unavailable. Please refresh the page and try again.';
+        return;
+      }
+
       const existing = dealerListStore.getDealerById(editDealerId);
-      if (existing) {
+      if (!existing) {
+        dealerFormError.textContent = 'Dealer not found. Please refresh the page.';
+        return;
+      }
+
+      try {
+        await apiUpdate(editDealerId, {
+          ...dealerPayload,
+          existingDealer: existing,
+        });
+        
+        // Update local store
         dealerListStore.updateDealer({
           ...existing,
           ...dealerPayload,
         });
+        
+        // Reload to get latest data from server
+        await dealerListStore.load({ showLoadingState: false });
+      } catch (error) {
+        console.error('Failed to update dealer via API', error);
+        dealerFormError.textContent =
+          error instanceof Error ? error.message : 'Failed to update dealer.';
+        return;
       }
     }
 
@@ -138,6 +173,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   dealerForm.addEventListener('submit', handleDealerFormSubmit);
 
+  function openDeleteDealerModal(id) {
+    dealerToDeleteId = id;
+    deleteDealerModal.setAttribute('aria-hidden', 'false');
+    deleteDealerModal.classList.add('open');
+  }
+
+  function closeDeleteDealerModal() {
+    dealerToDeleteId = null;
+    deleteDealerModal.classList.remove('open');
+    deleteDealerModal.setAttribute('aria-hidden', 'true');
+  }
+
+  deleteDealerClose?.addEventListener('click', closeDeleteDealerModal);
+  deleteDealerCancel?.addEventListener('click', closeDeleteDealerModal);
+
+  deleteDealerConfirm?.addEventListener('click', async () => {
+    if (dealerToDeleteId) {
+      const originalText = deleteDealerConfirm.textContent;
+      deleteDealerConfirm.disabled = true;
+      deleteDealerConfirm.textContent = 'Deleting...';
+
+      const deleteApi = window.dealerDeleteApi?.deleteDealer;
+      if (!deleteApi) {
+        console.error('Dealer delete API not found');
+        alert('API not found. Please refresh.');
+        deleteDealerConfirm.disabled = false;
+        deleteDealerConfirm.textContent = originalText;
+        return;
+      }
+
+      try {
+        await deleteApi(dealerToDeleteId);
+        // Remove from local store
+        dealerListStore.removeDealer(dealerToDeleteId);
+        closeDeleteDealerModal();
+      } catch (error) {
+        console.error('Failed to delete dealer', error);
+        alert(error instanceof Error ? error.message : 'Failed to delete dealer');
+      } finally {
+        deleteDealerConfirm.disabled = false;
+        deleteDealerConfirm.textContent = originalText;
+      }
+    }
+  });
+
   dealerListEl.addEventListener('click', (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
@@ -148,21 +228,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = row.getAttribute('data-id');
     if (!id) return;
 
-    if (target.classList.contains('dealer-edit-btn')) {
-      const dealer = dealerListStore.getDealerById(id);
-      if (dealer) {
-        openDealerModal('edit', dealer);
-      }
-    } else if (target.classList.contains('dealer-delete-btn')) {
-      const dealer = dealerListStore.getDealerById(id);
-      if (!dealer) return;
+    // Check if edit button was clicked
+    const editButton = target.classList.contains('dealer-edit-btn') 
+      ? target 
+      : target.closest('.dealer-edit-btn');
+    
+    if (editButton) {
+      // Prevent row click (navigation) - edit-dealer-modal.js will handle opening the modal
+      event.stopPropagation();
+      return;
+    }
 
-      const confirmed = window.confirm(
-        `გსურთ დილერის "${dealer.name}" და მისი ყველა ავტომობილის წაშლა?`
-      );
-      if (!confirmed) return;
-
-      dealerListStore.removeDealer(id);
+    if (target.classList.contains('dealer-delete-btn')) {
+      // Prevent row click (navigation)
+      event.stopPropagation();
+      openDeleteDealerModal(id);
     } else {
       // Click anywhere else on the row opens dealer detail
       window.location.href = `dealer.html?dealerId=${encodeURIComponent(id)}`;

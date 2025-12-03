@@ -10,7 +10,7 @@
     name: dealerPayload.name || '',
     username: dealerPayload.username || '',
     passwordHash: dealerPayload.password || '',
-    contactNumber: dealerPayload.phone || '',
+    contactNumber: dealerPayload.phone || dealerPayload.contactNumber || '',
     address: dealerPayload.address || '',
     cars: Array.isArray(dealerPayload.cars) ? dealerPayload.cars : [],
   });
