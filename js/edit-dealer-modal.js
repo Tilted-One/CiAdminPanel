@@ -1,27 +1,20 @@
 /**
- * Bootstrap Modal Handler for Editing Dealers
+ * Custom Modal Handler for Editing Dealers
  * Handles opening modal with dealer data, form submission, and list refresh
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if Bootstrap is available
-  if (typeof bootstrap === 'undefined') {
-    console.error('Bootstrap is not loaded. Please ensure Bootstrap JS is included.');
-    return;
-  }
-
   // Get modal element
-  const editDealerModalElement = document.getElementById('editDealerModal');
-  if (!editDealerModalElement) {
+  const editDealerModal = document.getElementById('editDealerModal');
+  if (!editDealerModal) {
     console.error('Edit dealer modal element not found.');
     return;
   }
 
-  // Initialize Bootstrap modal
-  const editDealerModal = new bootstrap.Modal(editDealerModalElement);
-  
   const editDealerForm = document.getElementById('editDealerForm');
   const editDealerError = document.getElementById('editDealerError');
+  const editDealerClose = document.getElementById('editDealerClose');
+  const editDealerCancel = document.getElementById('editDealerCancel');
   
   // Get form inputs
   const editDealerIdInput = document.getElementById('editDealerId');
@@ -75,7 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
     hideError();
 
     // Open the modal
-    editDealerModal.show();
+    editDealerModal.setAttribute('aria-hidden', 'false');
+    editDealerModal.classList.add('open');
+  }
+
+  /**
+   * Closes the edit modal
+   */
+  function closeEditModal() {
+    editDealerModal.classList.remove('open');
+    editDealerModal.setAttribute('aria-hidden', 'true');
   }
 
   /**
@@ -84,16 +86,24 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   function showError(message) {
     editDealerError.textContent = message;
-    editDealerError.classList.remove('d-none');
   }
 
   /**
    * Hides error message in the modal
    */
   function hideError() {
-    editDealerError.classList.add('d-none');
     editDealerError.textContent = '';
   }
+
+  // Close modal handlers
+  editDealerClose?.addEventListener('click', closeEditModal);
+  editDealerCancel?.addEventListener('click', closeEditModal);
+
+  editDealerModal?.addEventListener('click', (event) => {
+    if (event.target === editDealerModal) {
+      closeEditModal();
+    }
+  });
 
   /**
    * Handles form submission
@@ -134,15 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Prepare the payload - API expects contactNumber format
-    const dealerPayload = {
-      name: name,
-      username: username,
-      contactNumber: contactNumber, // Use contactNumber to match API format
-      address: address,
-      existingDealer: dealerListStore.getDealerById(dealerId) || {},
-    };
-
     // Disable submit button during request
     const submitButton = editDealerForm.querySelector('button[type="submit"]');
     const originalButtonText = submitButton.textContent;
@@ -150,11 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.textContent = 'Saving...';
 
     try {
-      // Send PUT request to update dealer
-      await updateDealer(dealerId, dealerPayload);
+      // Send PUT request with the exact body the API expects
+      await updateDealer({
+        id: dealerId,
+        name: name,
+        username: username,
+        contactNumber: contactNumber,
+        address: address,
+      });
 
       // Close modal
-      editDealerModal.hide();
+      closeEditModal();
 
       // Refresh dealer list
       await dealerListStore.load({ showLoadingState: false });

@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const dealerPhoneInput = document.getElementById('dealer-phone');
   const dealerAddressInput = document.getElementById('dealer-address');
   const dealerUsernameInput = document.getElementById('dealer-username');
+  const dealerPasswordInput = document.getElementById('dealer-password');
+  const dealerPasswordRow = document.getElementById('dealer-password-row');
 
   const dealerListStore = window.dealerListStore;
   if (!dealerListStore) {
@@ -54,6 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
       dealerPhoneInput.value = dealer.phone || dealer.contactNumber || dealer.phoneNumber || '';
       dealerAddressInput.value = dealer.address || '';
       dealerUsernameInput.value = dealer.username || dealer.login || '';
+      // Hide password field for edit mode and remove required attribute
+      if (dealerPasswordRow) dealerPasswordRow.style.display = 'none';
+      if (dealerPasswordInput) {
+        dealerPasswordInput.value = '';
+        dealerPasswordInput.removeAttribute('required');
+      }
     } else {
       editDealerId = null;
       dealerModalTitle.textContent = 'ახალი დილერი';
@@ -61,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
       dealerPhoneInput.value = '';
       dealerAddressInput.value = '';
       dealerUsernameInput.value = '';
+      dealerPasswordInput.value = '';
+      // Show password field for new dealer and add required attribute
+      if (dealerPasswordRow) dealerPasswordRow.style.display = 'block';
+      if (dealerPasswordInput) dealerPasswordInput.setAttribute('required', 'required');
     }
 
     dealerModal.setAttribute('aria-hidden', 'false');
@@ -76,15 +88,52 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     dealerFormError.textContent = '';
     dealerNameInput.classList.remove('error');
+    dealerPhoneInput.classList.remove('error');
+    dealerAddressInput.classList.remove('error');
+    dealerUsernameInput.classList.remove('error');
+    if (dealerPasswordInput) dealerPasswordInput.classList.remove('error');
 
     const name = String(dealerNameInput.value || '').trim();
     const phone = String(dealerPhoneInput.value || '').trim();
     const address = String(dealerAddressInput.value || '').trim();
     const username = String(dealerUsernameInput.value || '').trim();
+    const password = String(dealerPasswordInput?.value || '').trim();
 
+    // Validate fields in order: Name -> Phone -> Address -> Username -> Password
     if (!name) {
       dealerFormError.textContent = 'დასახელება სავალდებულოა.';
       dealerNameInput.classList.add('error');
+      dealerNameInput.focus();
+      return;
+    }
+
+    if (!phone) {
+      dealerFormError.textContent = 'ტელეფონი სავალდებულოა.';
+      dealerPhoneInput.classList.add('error');
+      dealerPhoneInput.focus();
+      return;
+    }
+
+    if (!address) {
+      dealerFormError.textContent = 'მისამართი სავალდებულოა.';
+      dealerAddressInput.classList.add('error');
+      dealerAddressInput.focus();
+      return;
+    }
+
+    if (!username) {
+      dealerFormError.textContent = 'მომხმარებლის სახელი სავალდებულოა.';
+      dealerUsernameInput.classList.add('error');
+      dealerUsernameInput.focus();
+      return;
+    }
+
+    if (!editDealerId && !password) {
+      dealerFormError.textContent = 'პაროლი სავალდებულოა ახალი დილერისთვის.';
+      if (dealerPasswordInput) {
+        dealerPasswordInput.classList.add('error');
+        dealerPasswordInput.focus();
+      }
       return;
     }
 
@@ -93,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       phone,
       address,
       username,
+      password, // Include password for new dealers
     };
 
     if (!editDealerId) {
@@ -228,14 +278,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = row.getAttribute('data-id');
     if (!id) return;
 
-    // Check if edit button was clicked
+    // Check if edit button was clicked - let edit-dealer-modal.js handle it
     const editButton = target.classList.contains('dealer-edit-btn') 
       ? target 
       : target.closest('.dealer-edit-btn');
     
     if (editButton) {
-      // Prevent row click (navigation) - edit-dealer-modal.js will handle opening the modal
-      event.stopPropagation();
+      // Don't handle edit button here - edit-dealer-modal.js will handle it via document-level listener
+      // Don't stop propagation so edit-dealer-modal.js can receive the event
       return;
     }
 

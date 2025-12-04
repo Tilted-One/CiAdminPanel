@@ -6,49 +6,61 @@
     return raw ? raw.replace(/"/g, '') : '';
   };
 
-  async function updateDealer(dealerId, dealerPayload = {}) {
+  /**
+   * Updates a dealer.
+   * Sends PUT request with body:
+   * {
+   *   "id": 0,
+   *   "name": "string",
+   *   "username": "string",
+   *   "contactNumber": "string",
+   *   "address": "string"
+   * }
+   *
+   * @param {Object} dealer - Dealer data to update
+   */
+  async function updateDealer(dealer = {}) {
     const token = getToken();
 
     if (!token) {
       throw new Error('Missing authentication token. Please login again.');
     }
 
-    if (!dealerId) {
-      throw new Error('Dealer ID is required for update.');
-    }
-
-    // Get existing dealer data for fallback values
-    const existingDealer = dealerPayload.existingDealer || {};
-    
-    // Convert dealerId to number for both URL and body
-    const dealerIdNum = parseInt(String(dealerId), 10);
-    if (isNaN(dealerIdNum) || dealerIdNum <= 0) {
+    // Convert and validate ID
+    const id = Number(dealer.id);
+    if (!id || Number.isNaN(id) || id <= 0) {
       throw new Error('Invalid dealer ID format.');
     }
+
+    // Ensure all fields are strings (API expects string format)
+    const name = String(dealer.name || '').trim();
+    const username = String(dealer.username || '').trim();
+    const contactNumber = String(dealer.contactNumber || dealer.phone || '').trim();
+    const address = String(dealer.address || '').trim();
     
-    // Extract values from payload or use existing dealer values as fallback
-    const name = dealerPayload.name || existingDealer.name || '';
-    const username = dealerPayload.username || existingDealer.username || '';
-    // Prioritize contactNumber to match API format, fallback to phone for backwards compatibility
-    const contactNumber = dealerPayload.contactNumber || dealerPayload.phone || existingDealer.contactNumber || existingDealer.phone || '';
-    const address = dealerPayload.address || existingDealer.address || '';
+    // Validate required fields
+    if (!name) {
+      throw new Error('Name is required.');
+    }
+    if (!username) {
+      throw new Error('Username is required.');
+    }
     
-    // API expects only these fields: id, name, username, contactNumber, address
+    // API expects exactly these fields: id (number), name, username, contactNumber, address (all strings)
     const body = {
-      id: dealerIdNum,
+      id: id,
       name: name,
       username: username,
       contactNumber: contactNumber,
       address: address,
     };
 
-    const url = `${UPDATE_DEALER_URL}/${dealerIdNum}`;
-
-    const response = await fetch(url, {
+    // Backend expects ID in the body; use the base URL for PUT
+    const response = await fetch(UPDATE_DEALER_URL, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
@@ -69,7 +81,7 @@
       const message =
         typeof parsedResponse === 'string' && parsedResponse
           ? parsedResponse
-          : parsedResponse?.message || 'Failed to update dealer.';
+          : (parsedResponse && parsedResponse.message) || 'Failed to update dealer.';
       throw new Error(message);
     }
 

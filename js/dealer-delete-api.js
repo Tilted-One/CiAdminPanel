@@ -1,5 +1,5 @@
 (function () {
-  const DEALER_DELETE_ENDPOINT = 'http://57.131.25.31:8080/dealers';
+  const DEALER_DELETE_ENDPOINT = 'http://57.131.25.31:8080/dealer';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -16,7 +16,13 @@
       throw new Error('Dealer ID is required.');
     }
 
-    const url = `${DEALER_DELETE_ENDPOINT}/${dealerId}`;
+    // Convert dealerId to number to match API expectations
+    const dealerIdNum = parseInt(String(dealerId), 10);
+    if (isNaN(dealerIdNum) || dealerIdNum <= 0) {
+      throw new Error('Invalid dealer ID format.');
+    }
+
+    const url = `${DEALER_DELETE_ENDPOINT}/${dealerIdNum}`;
     
     const response = await fetch(url, {
       method: 'DELETE',
@@ -26,13 +32,26 @@
       },
     });
     
-    if (response.ok) {
-       const text = await response.text();
-       return text ? JSON.parse(text) : { success: true };
+    const responseText = await response.text();
+    let parsedResponse = null;
+
+    if (responseText) {
+      try {
+        parsedResponse = JSON.parse(responseText);
+      } catch (error) {
+        parsedResponse = responseText;
+      }
     }
 
-    const text = await response.text();
-    throw new Error(`Delete failed: ${response.status} ${text}`);
+    if (!response.ok) {
+      const message =
+        typeof parsedResponse === 'string' && parsedResponse
+          ? parsedResponse
+          : parsedResponse?.message || `Delete failed: ${response.status}`;
+      throw new Error(message);
+    }
+
+    return parsedResponse || { success: true };
   }
 
   window.dealerDeleteApi = window.dealerDeleteApi || {};

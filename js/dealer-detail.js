@@ -1226,13 +1226,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // Send PUT request with the exact format specified
-      await updateApi(actualDealerId, {
+      // Send PUT request with the exact body the API expects
+      await updateApi({
+        id: actualDealerId,
         name: name,
         username: username,
         contactNumber: contactNumber, // Use contactNumber to match API format
         address: address,
-        existingDealer: dealer,
       });
 
       // Update local dealer object
@@ -1298,9 +1298,40 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // TODO: Implement API call to reset password
-    alert('Reset password functionality to be implemented');
+  // Implement API call to reset password
+  const resetApi = window.dealerResetPasswordApi?.resetDealerPassword;
+  if (typeof resetApi !== 'function') {
+    resetPasswordError.textContent = 'Reset password API is not available. Please refresh the page.';
+    return;
+  }
+
+  // Get the actual dealer ID from dealer object (prefer numeric ID) or URL param
+  const actualDealerId = dealer?.id || dealer?.dealerId || dealerId;
+  if (!actualDealerId) {
+    resetPasswordError.textContent = 'Dealer ID not found. Please refresh the page.';
+    return;
+  }
+
+  const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.textContent : '';
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+  }
+
+  try {
+    await resetApi(actualDealerId, newPass);
     closeResetPasswordModal();
+  } catch (error) {
+    console.error('Failed to reset password', error);
+    resetPasswordError.textContent =
+      error instanceof Error ? error.message : 'Failed to reset password. Please try again.';
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  }
   });
 
   carGridEl?.addEventListener('click', (event) => {
