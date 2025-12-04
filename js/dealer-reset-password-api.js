@@ -1,5 +1,5 @@
 (function () {
-  const DEALER_RESET_PASSWORD_ENDPOINT = 'http://57.131.25.31:8080/dealer/resetpassword';
+  const API_RESET_PASSWORD = window.API + '/resetpassword';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -8,10 +8,18 @@
 
   /**
    * Reset dealer password
-   * POST /dealer/resetpassword?dealerId={id}&newPass={password}
+   * POST /resetpassword
+   * Body (multipart/form-data):
+   * dealerId: number
+   * newPass: string
+   * 
+   * IMPORTANT: 
+   * - Uses FormData for multipart/form-data
+   * - DO NOT set Content-Type header manually - browser sets it automatically with boundary
+   * - Authorization: Bearer token in header
    *
-   * @param {number|string} dealerId
-   * @param {string} newPass
+   * @param {number|string} dealerId - The dealer ID (numeric)
+   * @param {string} newPass - The new password from the reset password modal
    */
   async function resetDealerPassword(dealerId, newPass) {
     const token = getToken();
@@ -19,32 +27,37 @@
       throw new Error('Missing authentication token. Please login again.');
     }
 
-    // Validate dealerId
+    // Validate dealerId - must be numeric
     const idNum = parseInt(String(dealerId), 10);
     if (!dealerId || Number.isNaN(idNum) || idNum <= 0) {
       throw new Error('Invalid dealer ID.');
     }
 
-    // Validate newPass
+    // Validate newPass (what's written in reset password modal)
     const pass = String(newPass || '').trim();
     if (!pass) {
       throw new Error('New password is required.');
     }
+    
+    if (pass.length < 8) {
+      throw new Error('Password must be at least 8 characters long.');
+    }
 
-    // Build query string: dealerId & newPass (no * in keys)
-    const params = new URLSearchParams({
-      dealerId: String(idNum),
-      newPass: pass,
-    });
+    // Build FormData for multipart/form-data
+    // FormData automatically sets Content-Type: multipart/form-data with boundary
+    const formData = new FormData();
+    formData.append('dealerId', String(idNum)); // Append as string, backend will parse as number
+    formData.append('newPass', pass);
 
-    const url = `${DEALER_RESET_PASSWORD_ENDPOINT}?${params.toString()}`;
-
-    const response = await fetch(url, {
+    // CRITICAL: Do NOT set Content-Type header manually
+    // Browser will automatically set: Content-Type: multipart/form-data; boundary=----WebKitFormBoundary...
+    const response = await fetch(API_RESET_PASSWORD, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
+        // DO NOT include Content-Type here - browser sets it automatically with boundary
       },
+      body: formData, // FormData object, not JSON.stringify()
     });
 
     const responseText = await response.text();
@@ -72,5 +85,3 @@
   window.dealerResetPasswordApi = window.dealerResetPasswordApi || {};
   window.dealerResetPasswordApi.resetDealerPassword = resetDealerPassword;
 })();
-
-

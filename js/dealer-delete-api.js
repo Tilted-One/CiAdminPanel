@@ -1,5 +1,5 @@
 (function () {
-  const DEALER_DELETE_ENDPOINT = 'http://57.131.25.31:8080/dealer';
+  const API_DELETE_DEALER = window.API + '/dealer';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -22,7 +22,7 @@
       throw new Error('Invalid dealer ID format.');
     }
 
-    const url = `${DEALER_DELETE_ENDPOINT}/${dealerIdNum}`;
+    const url = `${API_DELETE_DEALER}/${dealerIdNum}`;
     
     const response = await fetch(url, {
       method: 'DELETE',

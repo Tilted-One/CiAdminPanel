@@ -1,5 +1,5 @@
 (function () {
-  const CARS_ENDPOINT = 'http://57.131.25.31:8080/cars';
+  const API_CARS = window.API + '/cars';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -71,7 +71,7 @@
 
     console.log('Sending PUT payload:', payload);
 
-    const response = await fetch(CARS_ENDPOINT, {
+    const response = await fetch(API_CARS, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ka">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JeraMotors – Login</title>
+    <title>ჯერა მოტორსი – შესვლა</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -15,9 +15,9 @@
             <div class="login-logo-inner">JM</div>
           </div>
           <div>
-            <div class="login-title">JeraMotors Admin Panel</div>
+            <div class="login-title">ჯერა მოტორსი ადმინ პანელი</div>
             <div class="login-subtitle">
-              Sign in to manage dealers and their inventory.  
+              შედით სისტემაში დილერებისა და მათი ინვენტარის მართვისთვის.
             </div>
           </div>
         </div>
@@ -25,35 +25,36 @@
 
       <form id="login-form" class="login-form" autocomplete="off" novalidate>
         <div class="form-row">
-          <label for="login-email">Username</label>
+          <label for="login-email">მომხმარებლის სახელი</label>
           <input
             id="login-email"
             type="text"
-            placeholder="Username"
+            placeholder="მომხმარებლის სახელი"
             required
           />
         </div>
         <div class="form-row">
-          <label for="login-password">Password</label>
+          <label for="login-password">პაროლი</label>
           <input
             id="login-password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="შეიყვანეთ პაროლი"
             required
           />
         </div>
         <div id="login-error" class="error-text"></div>
 
         <button type="submit" class="btn btn-primary login-submit">
-          <span>Sign in</span>
+          <span>შესვლა</span>
         </button>
       </form>
 
       <div class="login-footer">
-        <span>Only admins can sign in. Session is stored in your browser.</span>
+        <span>მხოლოდ ადმინისტრატორებს შეუძლიათ შესვლა. სესია ინახება თქვენს ბრაუზერში.</span>
       </div>
     </div>
 
+    <script src="js/api-config.js"></script>
     <script src="js/api-login.js"></script>
   </body>
 </html>

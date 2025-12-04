@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ka">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JeraMotors – Dealer Detail</title>
+  <title>ჯერა მოტორსი – დილერის დეტალები</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -13,13 +13,13 @@
   <header>
     <div class="container">
       <nav>
-        <a href="dashboard.html" class="logo">ჯერა მოტორსი / JeraMotors<span>.</span></a>
+        <a href="dashboard.html" class="logo">ჯერა მოტორსი<span>.</span></a>
         <ul class="nav-links">
-          <li><a href="dashboard.html" class="active">Dashboard</a></li>
+          <li><a href="dashboard.html" class="active">დაფა</a></li>
           <li>
             <button id="logout-btn" class="btn btn-outline" type="button"
               style="padding: 0.5rem 1.5rem; font-size: 0.9rem; border-radius: 50px;">
-              Logout
+              გასვლა
             </button>
           </li>
         </ul>
@@ -30,11 +30,11 @@
   <section id="dealer-error" class="dealer-error hidden">
     <div class="container">
       <div class="glass-card dealer-error-card">
-        <h1 class="page-title">Dealer not found</h1>
+        <h1 class="page-title">დილერი ვერ მოიძებნა</h1>
         <p class="page-subtitle">
-          We couldn’t find this dealer. It may have been removed or the link is invalid.
+          ამ დილერის მოძიება ვერ მოხერხდა. ის შესაძლოა წაიშალა ან ბმული არასწორია.
         </p>
-        <a href="dashboard.html" class="btn btn-primary">Back to dealers</a>
+        <a href="dashboard.html" class="btn btn-primary">დილერების სიას დაბრუნება</a>
       </div>
     </div>
   </section>
@@ -43,26 +43,27 @@
     <div class="container">
       <div class="dealer-hero-header">
         <div>
-          <span class="hero-tag" style="margin-bottom: 1rem;">Dealer Room</span>
-          <h1 id="dealer-name-heading" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Dealer name</h1>
+          <span class="hero-tag" style="margin-bottom: 1rem;">დილერის ოთახი</span>
+          <h1 id="dealer-name-heading" style="font-size: 2.5rem; margin-bottom: 0.5rem;">დილერის სახელი</h1>
           <p class="page-subtitle" style="font-size: 20px; color: var(--text-muted);">
-             Username: <span id="dealer-username-line">@username</span>
+            მომხმარებელი: <span id="dealer-username-line">@username</span>
           </p>
-        
+
           <p class="page-subtitle" style="font-size: 20px; color: var(--text-muted);">
-             Address: <span id="dealer-address-line">Address</span>
+            მისამართი: <span id="dealer-address-line">მისამართი</span>
           </p>
-          <span class="dealer-phone-label" style="font-size: 20px;">Phone:</span>
+          <span class="dealer-phone-label" style="font-size: 20px;">ტელეფონი:</span>
           <span class="dealer-phone-value" id="dealer-phone-line" style="font-size: 20px;">-</span>
         </div>
         <div class="dealer-hero-right">
           <div style="margin-bottom: 1rem;">
-            <p class="dealer-total-label">Total Vehicles</p>
+            <p class="dealer-total-label">სულ მანქანა</p>
             <h2 id="dealer-total-count" class="dealer-total-count">0</h2>
           </div>
           <div class="dealer-header-actions" style="display: flex; gap: 0.5rem; align-items: center;">
-            <button id="reset-password-btn" class="btn btn-primary" type="button" style="font-size: 0.85rem; padding: 0.6rem 1rem;">
-              Reset Password
+            <button id="reset-password-btn" class="btn btn-primary" type="button"
+              style="font-size: 0.85rem; padding: 0.6rem 1rem;">
+              პაროლის აღდგენა
             </button>
           </div>
         </div>
@@ -71,21 +72,21 @@
 
       <div class="car-filter-bar glass-card" style="margin-top: 2rem;">
         <div class="filter-group">
-          <label for="car-search">Search car</label>
-          <input id="car-search" type="text" placeholder="Search by model or VIN" />
+          <label for="car-search">მანქანის ძიება</label>
+          <input id="car-search" type="text" placeholder="ძიება მოდელით ან VIN-ით" />
         </div>
         <div class="filter-group">
-          <label for="car-status-filter">Status</label>
+          <label for="car-status-filter">სტატუსი</label>
           <select id="car-status-filter">
-            <option value="all">All</option>
-            <option value="purchasing">Purchasing</option>
-            <option value="loading">Loading</option>
-            <option value="arrived">Arrived</option>
+            <option value="all">ყველა</option>
+            <option value="purchasing">შეძენა</option>
+            <option value="loading">დატვირთვა</option>
+            <option value="arrived">ჩამოსვლა</option>
           </select>
         </div>
         <div class="page-actions">
           <button id="new-car-btn" class="btn btn-primary" type="button">
-            + Add car
+            + მანქანის დამატება
           </button>
         </div>
       </div>
@@ -97,30 +98,30 @@
   <div id="edit-dealer-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Edit Dealer Information</h2>
+        <h2>დილერის ინფორმაციის რედაქტირება</h2>
         <button id="edit-dealer-close" class="modal-close" type="button">×</button>
       </div>
       <form id="edit-dealer-form" class="modal-form" autocomplete="off">
         <div class="form-row">
-          <label for="edit-dealer-name">Name</label>
+          <label for="edit-dealer-name">სახელი</label>
           <input id="edit-dealer-name" type="text" required />
         </div>
         <div class="form-row">
-          <label for="edit-dealer-username">Username</label>
+          <label for="edit-dealer-username">მომხმარებლის სახელი</label>
           <input id="edit-dealer-username" type="text" required />
         </div>
         <div class="form-row">
-          <label for="edit-dealer-phone">Phone</label>
+          <label for="edit-dealer-phone">ტელეფონი</label>
           <input id="edit-dealer-phone" type="text" required />
         </div>
         <div class="form-row">
-          <label for="edit-dealer-address">Address</label>
+          <label for="edit-dealer-address">მისამართი</label>
           <input id="edit-dealer-address" type="text" required />
         </div>
         <div id="edit-dealer-error" class="error-text"></div>
         <div class="modal-footer">
-          <button id="edit-dealer-cancel" class="btn btn-ghost" type="button">Cancel</button>
-          <button class="btn btn-primary" type="submit">Save Changes</button>
+          <button id="edit-dealer-cancel" class="btn btn-ghost" type="button">გაუქმება</button>
+          <button class="btn btn-primary" type="submit">ცვლილებების შენახვა</button>
         </div>
       </form>
     </div>
@@ -129,22 +130,22 @@
   <div id="reset-password-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Reset Password</h2>
+        <h2>პაროლის აღდგენა</h2>
         <button id="reset-password-close" class="modal-close" type="button">×</button>
       </div>
       <form id="reset-password-form" class="modal-form" autocomplete="off">
         <div class="form-row">
-          <label for="new-password">New Password</label>
+          <label for="new-password">ახალი პაროლი</label>
           <input id="new-password" type="password" required />
         </div>
         <div class="form-row">
-          <label for="confirm-password">Confirm Password</label>
+          <label for="confirm-password">პაროლის დადასტურება</label>
           <input id="confirm-password" type="password" required />
         </div>
         <div id="reset-password-error" class="error-text"></div>
         <div class="modal-footer">
-          <button id="reset-password-cancel" class="btn btn-ghost" type="button">Cancel</button>
-          <button class="btn btn-primary" type="submit">Reset Password</button>
+          <button id="reset-password-cancel" class="btn btn-ghost" type="button">გაუქმება</button>
+          <button class="btn btn-primary" type="submit">პაროლის აღდგენა</button>
         </div>
       </form>
     </div>
@@ -154,7 +155,7 @@
   <div id="car-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="car-modal-title">New car</h2>
+        <h2 id="car-modal-title">ახალი მანქანა</h2>
         <button id="car-modal-close" class="modal-close" type="button">
           ×
         </button>
@@ -163,61 +164,53 @@
         <div class="modal-form-grid">
           <!-- Vehicle details -->
           <div class="form-row">
-            <label for="car-make">Manufacturer <span class="required">*</span></label>
+            <label for="car-make">მწარმოებელი <span class="required">*</span></label>
             <input id="car-make" type="text" placeholder="BMW" required />
           </div>
           <div class="form-row">
-            <label for="car-model">Model <span class="required">*</span></label>
+            <label for="car-model">მოდელი <span class="required">*</span></label>
             <input id="car-model" type="text" placeholder="330i xDrive" required />
           </div>
           <div class="form-row">
-            <label for="car-year">Manufactured year <span class="required">*</span></label>
+            <label for="car-year">წარმოების წელი <span class="required">*</span></label>
             <input id="car-year" type="number" placeholder="2020" required />
           </div>
           <div class="form-row">
-            <label for="car-lot-number">Lot number <span class="required">*</span></label>
+            <label for="car-lot-number">ლოტის ნომერი <span class="required">*</span></label>
             <input id="car-lot-number" type="text" placeholder="LOT-1234" required />
           </div>
 
           <!-- VIN -->
           <div class="form-row modal-form-wide">
             <label for="car-vin">VIN <span class="required">*</span></label>
-            <input id="car-vin" type="text" placeholder="Enter VIN" required />
+            <input id="car-vin" type="text" placeholder="შეიყვანეთ VIN" required />
           </div>
 
           <!-- Logistics -->
           <div class="form-row">
-            <label for="car-purchased-date">Purchased date <span class="required">*</span></label>
-            <input
-              id="car-purchased-date"
-              type="date"
-              required
-            />
+            <label for="car-purchased-date">შეძენის თარიღი <span class="required">*</span></label>
+            <input id="car-purchased-date" type="date" required />
           </div>
           <div class="form-row">
-            <label for="car-arrival-date">Est. arrival <span class="required">*</span></label>
-            <input
-              id="car-arrival-date"
-              type="date"
-              required
-            />
+            <label for="car-arrival-date">მოსალოდნელი ჩამოსვლა <span class="required">*</span></label>
+            <input id="car-arrival-date" type="date" required />
           </div>
           <div class="form-row">
-            <label for="car-container-number">Container code <span class="required">*</span></label>
+            <label for="car-container-number">კონტეინერის კოდი <span class="required">*</span></label>
             <input id="car-container-number" type="text" placeholder="MSKU1234567" required />
           </div>
           <div class="form-row">
-            <label for="car-shipping-line">Transporter line <span class="required">*</span></label>
+            <label for="car-shipping-line">ტრანსპორტირების ხაზი <span class="required">*</span></label>
             <input id="car-shipping-line" type="text" placeholder="Maersk" required />
           </div>
 
           <!-- Financials -->
           <div class="form-row">
-            <label for="car-price-auction">Auction price <span class="required">*</span></label>
+            <label for="car-price-auction">აუქციონის ფასი <span class="required">*</span></label>
             <input id="car-price-auction" type="number" step="0.01" placeholder="18500" required />
           </div>
           <div class="form-row">
-            <label for="car-price-transport">Transporting price <span class="required">*</span></label>
+            <label for="car-price-transport">ტრანსპორტირების ფასი <span class="required">*</span></label>
             <input id="car-price-transport" type="number" step="0.01" placeholder="2100" required />
           </div>
         </div>
@@ -226,9 +219,9 @@
 
         <div class="modal-footer">
           <button id="car-modal-cancel" class="btn btn-ghost" type="button">
-            Cancel
+            გაუქმება
           </button>
-          <button class="btn btn-primary" type="submit">Save car</button>
+          <button class="btn btn-primary" type="submit">მანქანის შენახვა</button>
         </div>
       </form>
     </div>
@@ -237,15 +230,16 @@
   <div id="delete-car-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content" style="max-width: 400px;">
       <div class="modal-header">
-        <h2>Delete Car</h2>
+        <h2>მანქანის წაშლა</h2>
         <button id="delete-car-close" class="modal-close" type="button">×</button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete this car? This action cannot be undone.</p>
+        <p>დარწმუნებული ხართ რომ გსურთ ამ მანქანის წაშლა? ეს მოქმედება შეუქცევადია.</p>
       </div>
       <div class="modal-footer">
-        <button id="delete-car-cancel" class="btn btn-ghost" type="button">Cancel</button>
-        <button id="delete-car-confirm" class="btn btn-primary" type="button" style="background-color: #ef4444; border-color: #ef4444;">Delete</button>
+        <button id="delete-car-cancel" class="btn btn-ghost" type="button">გაუქმება</button>
+        <button id="delete-car-confirm" class="btn btn-primary" type="button"
+          style="background-color: #ef4444; border-color: #ef4444;">წაშლა</button>
       </div>
     </div>
   </div>
@@ -262,7 +256,8 @@
       </div>
       <div class="modal-footer">
         <button id="delete-photo-cancel" class="btn btn-ghost" type="button">გაუქმება</button>
-        <button id="delete-photo-confirm" class="btn btn-primary" type="button" style="background-color: #ef4444; border-color: #ef4444;">წაშლა</button>
+        <button id="delete-photo-confirm" class="btn btn-primary" type="button"
+          style="background-color: #ef4444; border-color: #ef4444;">წაშლა</button>
       </div>
     </div>
   </div>
@@ -271,7 +266,7 @@
   <div id="car-detail-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content modal-content-wide">
       <div class="modal-header">
-        <h2 id="car-detail-title">Car Name</h2>
+        <h2 id="car-detail-title">მანქანის სახელი</h2>
         <button id="car-detail-close" class="modal-close" type="button">
           ×
         </button>
@@ -280,19 +275,19 @@
         <div class="car-detail-body">
           <!-- Action Mode Section: Images & Status -->
           <div id="detail-action-section">
-            
+
             <div class="photo-section-group">
-              <h4 class="photo-section-title">Purchasing Photos</h4>
+              <h4 class="photo-section-title">შეძენის ფოტოები</h4>
               <div id="car-detail-images-row-0" class="car-detail-images-row"></div>
             </div>
 
             <div class="photo-section-group">
-              <h4 class="photo-section-title">Loading Photos</h4>
+              <h4 class="photo-section-title">დატვირთვის ფოტოები</h4>
               <div id="car-detail-images-row-1" class="car-detail-images-row"></div>
             </div>
 
             <div class="photo-section-group">
-              <h4 class="photo-section-title">Arrived Photos</h4>
+              <h4 class="photo-section-title">ჩამოსვლის ფოტოები</h4>
               <div id="car-detail-images-row-2" class="car-detail-images-row"></div>
             </div>
           </div>
@@ -300,15 +295,16 @@
           <!-- Edit Mode Section: Information Fields -->
           <div id="detail-info-section">
             <div class="detail-vin-row">
-              <label for="detail-status">Status</label>
+              <label for="detail-status">სტატუსი</label>
               <div style="display: flex; gap: 0.5rem; align-items: center;">
                 <select id="detail-status" class="detail-input" style="flex: 1;">
-                  <option value="0">Purchasing</option>
-                  <option value="1">Loading</option>
-                  <option value="2">Arrived</option>
+                  <option value="0">შეძენა</option>
+                  <option value="1">დატვირთვა</option>
+                  <option value="2">ჩამოსვლა</option>
                 </select>
-                <button id="update-status-btn" class="btn btn-primary" type="button" style="padding: 0.7rem 1rem; font-size: 0.8rem; margin-left: 10px;">
-                  Update Status
+                <button id="update-status-btn" class="btn btn-primary" type="button"
+                  style="padding: 0.7rem 1rem; font-size: 0.8rem; margin-left: 10px;">
+                  სტატუსის განახლება
                 </button>
               </div>
             </div>
@@ -319,83 +315,71 @@
             </div>
 
             <div class="detail-group">
-              <h3 class="detail-group-title">Vehicle Details</h3>
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Manufacturer</label>
-                <input id="detail-make" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Model</label>
-                <input id="detail-model" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Manufactured Date</label>
-                <input id="detail-year" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Lot Number</label>
-                <input id="detail-lot" type="text" class="detail-input" />
+              <h3 class="detail-group-title">მანქანის დეტალები</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>მწარმოებელი</label>
+                  <input id="detail-make" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>მოდელი</label>
+                  <input id="detail-model" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>წარმოების თარიღი</label>
+                  <input id="detail-year" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>ლოტის ნომერი</label>
+                  <input id="detail-lot" type="text" class="detail-input" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="detail-group">
-            <h3 class="detail-group-title">Logistics</h3>
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Purchased Date</label>
-                <input id="detail-purchased" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Est. Arrival</label>
-                <input id="detail-arrival" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Container Number</label>
-                <input id="detail-container" type="text" class="detail-input" />
-              </div>
-              <div class="detail-item">
-                <label>Shipping Line</label>
-                <input id="detail-shipping" type="text" class="detail-input" />
+            <div class="detail-group">
+              <h3 class="detail-group-title">ლოგისტიკა</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>შეძენის თარიღი</label>
+                  <input id="detail-purchased" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>მოსალოდნელი ჩამოსვლა</label>
+                  <input id="detail-arrival" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>კონტეინერის ნომერი</label>
+                  <input id="detail-container" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>ტრანსპორტირების ხაზი</label>
+                  <input id="detail-shipping" type="text" class="detail-input" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="detail-group">
-            <h3 class="detail-group-title">Financials</h3>
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Auction Price</label>
-                <input
-                  id="detail-price-auction"
-                  type="text"
-                  class="detail-input"
-                />
-              </div>
-              <div class="detail-item">
-                <label>Transporting Price</label>
-                <input
-                  id="detail-price-transport"
-                  type="text"
-                  class="detail-input"
-                />
+            <div class="detail-group">
+              <h3 class="detail-group-title">ფინანსები</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>აუქციონის ფასი</label>
+                  <input id="detail-price-auction" type="text" class="detail-input" />
+                </div>
+                <div class="detail-item">
+                  <label>ტრანსპორტირების ფასი</label>
+                  <input id="detail-price-transport" type="text" class="detail-input" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
 
         <div class="modal-footer">
-          <button
-            id="car-detail-cancel"
-            class="btn btn-ghost"
-            type="button"
-          >
-            Cancel
+          <button id="car-detail-cancel" class="btn btn-ghost" type="button">
+            გაუქმება
           </button>
           <button class="btn btn-primary" type="submit">
-            Save changes
+            ცვლილებების შენახვა
           </button>
         </div>
       </form>
@@ -403,6 +387,7 @@
   </div>
 
 
+  <script src="js/api-config.js"></script>
   <script src="js/car-api.js"></script>
   <script src="js/car-edit-api.js"></script>
   <script src="js/car-update-api.js"></script>

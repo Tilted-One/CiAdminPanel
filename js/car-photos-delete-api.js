@@ -1,5 +1,5 @@
 (function () {
-  const PHOTO_ENDPOINT = 'http://57.131.25.31:8080/carphoto';
+  const API_DELETE_CAR_PHOTO = window.API + '/carphoto';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -17,7 +17,7 @@
       throw new Error('Missing authentication token');
     }
 
-    const url = `${PHOTO_ENDPOINT}/${photoId}`;
+    const url = `${API_DELETE_CAR_PHOTO}/${photoId}`;
     console.log('Deleting photo:', url);
 
     const response = await fetch(url, {

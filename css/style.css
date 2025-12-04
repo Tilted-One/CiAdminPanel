@@ -1442,6 +1442,15 @@ nav {
     text-align: left;
     align-items: flex-start;
   }
+
+  /* Smaller logo/title on mobile */
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .brand-title {
+    font-size: 0.8rem;
+  }
 }
 
 /* Required field indicator */

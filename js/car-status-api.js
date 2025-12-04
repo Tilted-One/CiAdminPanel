@@ -1,5 +1,5 @@
 (function () {
-  const TRANSPORTATION_STATE_ENDPOINT = 'http://57.131.25.31:8080/cartransportationstate';
+  const API_CAR_TRANSPORTATION_STATE = window.API + '/cartransportationstate';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -19,7 +19,7 @@
     }
 
     try {
-      const url = `${TRANSPORTATION_STATE_ENDPOINT}/${carId}/${transportationState}`;
+      const url = `${API_CAR_TRANSPORTATION_STATE}/${carId}/${transportationState}`;
    
 
       const response = await fetch(url, {

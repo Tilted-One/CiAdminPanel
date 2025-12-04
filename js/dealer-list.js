@@ -1,5 +1,5 @@
 const dealerListStore = (() => {
-  const DEALERS_ENDPOINT = 'http://57.131.25.31:8080/dealers';
+  const API_DEALERS = window.API + '/dealers';
   const DEALER_CACHE_KEY = 'dashboardDealerCache';
   let fallbackIdCounter = 0;
 
@@ -201,7 +201,7 @@ const dealerListStore = (() => {
       throw new Error('Missing authentication token.');
     }
 
-    const response = await fetch(DEALERS_ENDPOINT, {
+    const response = await fetch(API_DEALERS, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,

@@ -1,5 +1,5 @@
 (function () {
-  const CAR_DELETE_ENDPOINT = 'http://57.131.25.31:8080/car';
+  const API_DELETE_CAR = window.API + '/car';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -16,7 +16,7 @@
       throw new Error('Car ID is required.');
     }
 
-    const url = `${CAR_DELETE_ENDPOINT}/${carId}`;
+    const url = `${API_DELETE_CAR}/${carId}`;
     
     const response = await fetch(url, {
       method: 'DELETE',

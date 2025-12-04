@@ -1,5 +1,5 @@
 (function () {
-  const REGISTER_DEALER_URL = 'http://57.131.25.31:8080/registerdealer';
+  const API_REGISTER_DEALER = window.API + '/registerdealer';
 
   const cleanToken = () => {
     const raw = localStorage.getItem('token');
@@ -24,7 +24,7 @@
 
     const body = buildPayload(dealerPayload);
 
-    const response = await fetch(REGISTER_DEALER_URL, {
+    const response = await fetch(API_REGISTER_DEALER, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

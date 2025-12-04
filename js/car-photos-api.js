@@ -1,6 +1,6 @@
 (function () {
-  const PHOTO_ENDPOINT = 'http://57.131.25.31:8080/carphotos';
-  const PHOTO_ADMIN_ENDPOINT = 'http://57.131.25.31:8080/carphotosadmin';
+  const API_CAR_PHOTOS = window.API + '/carphotos';
+  const API_CAR_PHOTOS_ADMIN = window.API + '/carphotosadmin';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -19,7 +19,7 @@
     }
 
     try {
-      const response = await fetch(`${PHOTO_ADMIN_ENDPOINT}/${carId}`, {
+      const response = await fetch(`${API_CAR_PHOTOS_ADMIN}/${carId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@
     }
 
     try {
-      const response = await fetch(PHOTO_ENDPOINT, {
+      const response = await fetch(API_CAR_PHOTOS, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

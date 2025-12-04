@@ -4,12 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('login-password');
     const errorBox = document.getElementById('login-error');
 
-    const API_URL = 'http://57.131.25.31:8080/loginadmin';
+    const API_LOGIN = window.API + '/loginadmin';
+    const API_DEALERS = window.API + '/dealers';
 
     // Auto-login check
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
-        fetch('http://57.131.25.31:8080/dealers', {
+        fetch(API_DEALERS, {
             headers: {
                 'Authorization': `Bearer ${storedToken}`,
                 'Accept': 'application/json'
@@ -48,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             body.append('login', login);
             body.append('password', password);
 
-            const response = await fetch(API_URL, {
+            const response = await fetch(API_LOGIN, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

@@ -1,5 +1,5 @@
 (function () {
-  const UPDATE_DEALER_URL = 'http://57.131.25.31:8080/dealer';
+  const API_UPDATE_DEALER = window.API + '/dealer';
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -56,7 +56,7 @@
     };
 
     // Backend expects ID in the body; use the base URL for PUT
-    const response = await fetch(UPDATE_DEALER_URL, {
+    const response = await fetch(API_UPDATE_DEALER, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,

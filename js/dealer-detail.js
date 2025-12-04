@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const CARS_ENDPOINT = 'http://57.131.25.31:8080/carsadmin';
+  const API_CARS_ADMIN = window.API + '/carsadmin';
   const DEALER_CACHE_KEY = 'dashboardDealerCache';
 
   const dealerErrorSection = document.getElementById('dealer-error');
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Construct the required endpoint: host/photo/{photoname}
-    return `http://57.131.25.31:8080/photo/${filename}`;
+    return `${window.API}/photo/${filename}`;
   }
 
   async function loadProtectedImages(container) {
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      const url = `${CARS_ENDPOINT}/${encodeURIComponent(userId)}`;
+      const url = `${API_CARS_ADMIN}/${encodeURIComponent(userId)}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -1305,10 +1305,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Get the actual dealer ID from dealer object (prefer numeric ID) or URL param
-  const actualDealerId = dealer?.id || dealer?.dealerId || dealerId;
-  if (!actualDealerId) {
-    resetPasswordError.textContent = 'Dealer ID not found. Please refresh the page.';
+  if (!dealer || !dealerId) {
+    resetPasswordError.textContent = 'Dealer information not available. Please refresh the page.';
     return;
   }
 
@@ -1320,7 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   try {
-    await resetApi(actualDealerId, newPass);
+    await resetApi(dealerId, newPass);
     closeResetPasswordModal();
   } catch (error) {
     console.error('Failed to reset password', error);
