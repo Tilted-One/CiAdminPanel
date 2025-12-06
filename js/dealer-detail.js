@@ -821,13 +821,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderPagination() {
     if (!paginationContainer || !paginationPages) return;
 
-    // Hide pagination if only one page or no pages
-    if (totalPages <= 1) {
-      paginationContainer.style.display = 'none';
-      return;
-    }
-
+    // Always show pagination
     paginationContainer.style.display = 'flex';
+    paginationContainer.style.visibility = 'visible';
 
     // Update info text
     if (paginationInfoText) {
@@ -836,24 +832,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update prev/next buttons
     if (paginationPrev) {
-      paginationPrev.disabled = currentPage <= 1;
+      paginationPrev.disabled = currentPage <= 1 || totalPages <= 1;
     }
     if (paginationNext) {
-      paginationNext.disabled = currentPage >= totalPages;
+      paginationNext.disabled = currentPage >= totalPages || totalPages <= 1;
     }
 
     // Render page numbers
     paginationPages.innerHTML = '';
     
+    // Ensure we have at least 1 page
+    const maxPages = Math.max(1, totalPages);
+    
     // Show max 5 page numbers around current page
     let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, currentPage + 2);
+    let endPage = Math.min(maxPages, currentPage + 2);
     
     // Adjust if we're near the start or end
     if (endPage - startPage < 4) {
       if (startPage === 1) {
-        endPage = Math.min(totalPages, startPage + 4);
-      } else if (endPage === totalPages) {
+        endPage = Math.min(maxPages, startPage + 4);
+      } else if (endPage === maxPages) {
         startPage = Math.max(1, endPage - 4);
       }
     }
@@ -884,8 +883,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add last page if not in range
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
+    if (endPage < maxPages) {
+      if (endPage < maxPages - 1) {
         const ellipsis = document.createElement('span');
         ellipsis.className = 'pagination-ellipsis';
         ellipsis.textContent = '...';
@@ -894,8 +893,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const lastBtn = document.createElement('button');
       lastBtn.className = 'pagination-page-btn';
-      lastBtn.textContent = totalPages;
-      lastBtn.addEventListener('click', () => goToPage(totalPages));
+      lastBtn.textContent = maxPages;
+      lastBtn.addEventListener('click', () => goToPage(maxPages));
       paginationPages.appendChild(lastBtn);
     }
   }
