@@ -819,16 +819,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderPagination() {
-    if (!paginationContainer || !paginationPages) {
-      console.warn('Pagination elements not found');
+    if (!paginationContainer || !paginationPages) return;
+
+    // Hide pagination if only one page or no pages
+    if (totalPages <= 1) {
+      paginationContainer.style.display = 'none';
       return;
     }
 
-    console.log('Rendering pagination:', { currentPage, totalPages, totalCars });
-
-    // Always show pagination
     paginationContainer.style.display = 'flex';
-    paginationContainer.style.visibility = 'visible';
 
     // Update info text
     if (paginationInfoText) {
@@ -840,24 +839,21 @@ document.addEventListener('DOMContentLoaded', () => {
       paginationPrev.disabled = currentPage <= 1;
     }
     if (paginationNext) {
-      paginationNext.disabled = currentPage >= totalPages || totalPages <= 1;
+      paginationNext.disabled = currentPage >= totalPages;
     }
 
     // Render page numbers
     paginationPages.innerHTML = '';
     
-    // Always show at least page 1
-    const maxPages = Math.max(1, totalPages);
-    
     // Show max 5 page numbers around current page
     let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(maxPages, currentPage + 2);
+    let endPage = Math.min(totalPages, currentPage + 2);
     
     // Adjust if we're near the start or end
     if (endPage - startPage < 4) {
       if (startPage === 1) {
-        endPage = Math.min(maxPages, startPage + 4);
-      } else if (endPage === maxPages) {
+        endPage = Math.min(totalPages, startPage + 4);
+      } else if (endPage === totalPages) {
         startPage = Math.max(1, endPage - 4);
       }
     }
@@ -888,8 +884,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add last page if not in range
-    if (endPage < maxPages) {
-      if (endPage < maxPages - 1) {
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
         const ellipsis = document.createElement('span');
         ellipsis.className = 'pagination-ellipsis';
         ellipsis.textContent = '...';
@@ -898,8 +894,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const lastBtn = document.createElement('button');
       lastBtn.className = 'pagination-page-btn';
-      lastBtn.textContent = maxPages;
-      lastBtn.addEventListener('click', () => goToPage(maxPages));
+      lastBtn.textContent = totalPages;
+      lastBtn.addEventListener('click', () => goToPage(totalPages));
       paginationPages.appendChild(lastBtn);
     }
   }
@@ -1202,17 +1198,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Get submit button and store original text
-    const submitButton = carDetailForm?.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton?.textContent || 'ცვლილებების შენახვა';
-    const hasPhotosToUpload = currentMode === 'action' && newDetailFiles.length > 0;
-
-    // Disable button and show uploading text if photos are being uploaded
-    if (hasPhotosToUpload && submitButton) {
-      submitButton.disabled = true;
-      submitButton.textContent = 'იტვირთება...';
-    }
-
     try {
       // 1. Save car details (only in edit mode)
       if (currentMode === 'edit' && updateCarApi) {
@@ -1220,7 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 2. Upload new photos
-      if (hasPhotosToUpload && uploadPhotoApi) {
+      if (currentMode === 'action' && newDetailFiles.length > 0 && uploadPhotoApi) {
         // Group files by type to send separate requests for Purchasing (0), Loading (1), Arrived (2)
         const filesByType = {};
         for (const item of newDetailFiles) {
@@ -1252,12 +1237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Failed to update car', error);
       alert('Failed to update car. Please try again.');
-    } finally {
-      // Re-enable button and restore original text
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = originalButtonText;
-      }
     }
   });
 
