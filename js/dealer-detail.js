@@ -38,6 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const carSearchInput = document.getElementById('car-search');
   const carStatusFilter = document.getElementById('car-status-filter');
   const newCarBtn = document.getElementById('new-car-btn');
+  
+  // Pagination elements
+  const paginationContainer = document.getElementById('pagination-container');
+  const paginationInfoText = document.getElementById('pagination-info-text');
+  const paginationPrev = document.getElementById('pagination-prev');
+  const paginationNext = document.getElementById('pagination-next');
+  const paginationPages = document.getElementById('pagination-pages');
 
   const carModal = document.getElementById('car-modal');
   const carModalTitle = document.getElementById('car-modal-title');
@@ -111,8 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await deleteApi(carToDeleteId);
       // Refresh list
-      cars = await fetchCarsFromApi(dealerId);
+      const result = await fetchCarsFromApi(dealerId, currentPage);
+      cars = result.cars;
+      totalPages = result.totalPages;
+      totalCars = result.totalCars;
       renderCars();
+      renderPagination();
       closeDeleteCarModal();
     } catch (error) {
       console.error('Failed to delete car', error);
@@ -156,6 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let newDetailFiles = []; // File objects
   let newDetailPreviews = []; // Preview URLs
   let currentMode = 'edit'; // 'edit' or 'action'
+  
+  // Pagination state
+  let currentPage = 1;
+  let totalPages = 1;
+  let totalCars = 0;
 
   const getToken = () => {
     const raw = localStorage.getItem('token');
@@ -581,15 +597,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  async function fetchCarsFromApi(userId) {
+  async function fetchCarsFromApi(userId, page = 1) {
     const token = getToken();
     if (!token) {
       console.error('Missing authentication token.');
-      return [];
+      return { cars: [], totalPages: 1, totalCars: 0 };
     }
 
     try {
-      const url = `${API_CARS_ADMIN}/${encodeURIComponent(userId)}`;
+      const url = `${API_CARS_ADMIN}/${encodeURIComponent(userId)}/${page}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -600,24 +616,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!response.ok) {
         console.error(`Failed to fetch cars: ${response.status}`);
-        return [];
+        return { cars: [], totalPages: 1, totalCars: 0 };
       }
 
       const data = await response.json();
       
       let carsArray = [];
+      let totalPagesCount = 1;
+      let totalCarsCount = 0;
+      
+      // Handle different response formats
       if (Array.isArray(data)) {
         carsArray = data;
+        totalCarsCount = data.length;
       } else if (data && Array.isArray(data.cars)) {
         carsArray = data.cars;
+        totalCarsCount = data.totalCars || data.total || carsArray.length;
+        totalPagesCount = data.totalPages || 1;
       } else if (data && Array.isArray(data.data)) {
         carsArray = data.data;
+        totalCarsCount = data.totalCars || data.total || carsArray.length;
+        totalPagesCount = data.totalPages || 1;
+      } else if (data && data.content && Array.isArray(data.content)) {
+        // Spring Boot Page format
+        carsArray = data.content;
+        totalCarsCount = data.totalElements || data.total || carsArray.length;
+        totalPagesCount = data.totalPages || 1;
       }
 
-      return carsArray.map((car, index) => normalizeCar(car, index));
+      const normalizedCars = carsArray.map((car, index) => normalizeCar(car, index));
+      
+      return {
+        cars: normalizedCars,
+        totalPages: totalPagesCount,
+        totalCars: totalCarsCount
+      };
     } catch (error) {
       console.error('Error fetching cars from API:', error);
-      return [];
+      return { cars: [], totalPages: 1, totalCars: 0 };
     }
   }
 
@@ -653,13 +689,17 @@ document.addEventListener('DOMContentLoaded', () => {
     showDealerView();
     showLoadingState();
 
-    cars = await fetchCarsFromApi(dealerId);
+    const result = await fetchCarsFromApi(dealerId, currentPage);
+    cars = result.cars;
+    totalPages = result.totalPages;
+    totalCars = result.totalCars;
 
     if (dealerTotalCountEl) {
-      dealerTotalCountEl.textContent = String(cars.length);
+      dealerTotalCountEl.textContent = String(totalCars);
     }
 
     renderCars();
+    renderPagination();
   }
 
   function applyCarFilters(list) {
@@ -687,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtered = applyCarFilters(cars || []);
 
     if (dealerTotalCountEl) {
-      dealerTotalCountEl.textContent = String(cars.length);
+      dealerTotalCountEl.textContent = String(totalCars);
     }
 
     if (!filtered.length) {
@@ -776,6 +816,112 @@ document.addEventListener('DOMContentLoaded', () => {
       .join('');
       
     loadProtectedImages(carGridEl);
+  }
+
+  function renderPagination() {
+    if (!paginationContainer || !paginationPages) {
+      console.warn('Pagination elements not found');
+      return;
+    }
+
+    console.log('Rendering pagination:', { currentPage, totalPages, totalCars });
+
+    // Always show pagination
+    paginationContainer.style.display = 'flex';
+    paginationContainer.style.visibility = 'visible';
+
+    // Update info text
+    if (paginationInfoText) {
+      paginationInfoText.textContent = `გვერდი ${currentPage} / ${totalPages} (სულ ${totalCars} მანქანა)`;
+    }
+
+    // Update prev/next buttons
+    if (paginationPrev) {
+      paginationPrev.disabled = currentPage <= 1;
+    }
+    if (paginationNext) {
+      paginationNext.disabled = currentPage >= totalPages || totalPages <= 1;
+    }
+
+    // Render page numbers
+    paginationPages.innerHTML = '';
+    
+    // Always show at least page 1
+    const maxPages = Math.max(1, totalPages);
+    
+    // Show max 5 page numbers around current page
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(maxPages, currentPage + 2);
+    
+    // Adjust if we're near the start or end
+    if (endPage - startPage < 4) {
+      if (startPage === 1) {
+        endPage = Math.min(maxPages, startPage + 4);
+      } else if (endPage === maxPages) {
+        startPage = Math.max(1, endPage - 4);
+      }
+    }
+
+    // Add first page if not in range
+    if (startPage > 1) {
+      const firstBtn = document.createElement('button');
+      firstBtn.className = 'pagination-page-btn';
+      firstBtn.textContent = '1';
+      firstBtn.addEventListener('click', () => goToPage(1));
+      paginationPages.appendChild(firstBtn);
+      
+      if (startPage > 2) {
+        const ellipsis = document.createElement('span');
+        ellipsis.className = 'pagination-ellipsis';
+        ellipsis.textContent = '...';
+        paginationPages.appendChild(ellipsis);
+      }
+    }
+
+    // Add page number buttons
+    for (let i = startPage; i <= endPage; i++) {
+      const pageBtn = document.createElement('button');
+      pageBtn.className = `pagination-page-btn ${i === currentPage ? 'active' : ''}`;
+      pageBtn.textContent = i;
+      pageBtn.addEventListener('click', () => goToPage(i));
+      paginationPages.appendChild(pageBtn);
+    }
+
+    // Add last page if not in range
+    if (endPage < maxPages) {
+      if (endPage < maxPages - 1) {
+        const ellipsis = document.createElement('span');
+        ellipsis.className = 'pagination-ellipsis';
+        ellipsis.textContent = '...';
+        paginationPages.appendChild(ellipsis);
+      }
+      
+      const lastBtn = document.createElement('button');
+      lastBtn.className = 'pagination-page-btn';
+      lastBtn.textContent = maxPages;
+      lastBtn.addEventListener('click', () => goToPage(maxPages));
+      paginationPages.appendChild(lastBtn);
+    }
+  }
+
+  async function goToPage(page) {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    
+    currentPage = page;
+    showLoadingState();
+    
+    const result = await fetchCarsFromApi(dealerId, currentPage);
+    cars = result.cars;
+    totalPages = result.totalPages;
+    totalCars = result.totalCars;
+
+    renderCars();
+    renderPagination();
+    
+    // Scroll to top of car grid
+    if (carGridEl) {
+      carGridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function clearFormErrors() {
@@ -900,8 +1046,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       await addCarApi(carData);
-      cars = await fetchCarsFromApi(dealerId);
+      // Refresh from first page to see the new car
+      currentPage = 1;
+      const result = await fetchCarsFromApi(dealerId, currentPage);
+      cars = result.cars;
+      totalPages = result.totalPages;
+      totalCars = result.totalCars;
       renderCars();
+      renderPagination();
       closeCarModal();
     } catch (error) {
       console.error('Failed to add car via API', error);
@@ -922,6 +1074,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   carStatusFilter?.addEventListener('change', () => {
     renderCars();
+  });
+
+  // Pagination event handlers
+  paginationPrev?.addEventListener('click', () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  });
+
+  paginationNext?.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
   });
 
   newCarBtn?.addEventListener('click', () => {
@@ -953,8 +1118,12 @@ document.addEventListener('DOMContentLoaded', () => {
         await updateStatusApi(currentDetailCarId, statusVal);
         
         // Refresh data
-        cars = await fetchCarsFromApi(dealerId);
+        const result = await fetchCarsFromApi(dealerId, currentPage);
+        cars = result.cars;
+        totalPages = result.totalPages;
+        totalCars = result.totalCars;
         renderCars();
+        renderPagination();
         
         // Optional: show success feedback briefly?
         updateStatusBtn.textContent = 'Done';
@@ -1033,6 +1202,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Get submit button and store original text
+    const submitButton = carDetailForm?.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton?.textContent || 'ცვლილებების შენახვა';
+    const hasPhotosToUpload = currentMode === 'action' && newDetailFiles.length > 0;
+
+    // Disable button and show uploading text if photos are being uploaded
+    if (hasPhotosToUpload && submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'იტვირთება...';
+    }
+
     try {
       // 1. Save car details (only in edit mode)
       if (currentMode === 'edit' && updateCarApi) {
@@ -1040,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 2. Upload new photos
-      if (currentMode === 'action' && newDetailFiles.length > 0 && uploadPhotoApi) {
+      if (hasPhotosToUpload && uploadPhotoApi) {
         // Group files by type to send separate requests for Purchasing (0), Loading (1), Arrived (2)
         const filesByType = {};
         for (const item of newDetailFiles) {
@@ -1061,13 +1241,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 3. Reload data
-      cars = await fetchCarsFromApi(dealerId);
+      const result = await fetchCarsFromApi(dealerId, currentPage);
+      cars = result.cars;
+      totalPages = result.totalPages;
+      totalCars = result.totalCars;
       renderCars();
+      renderPagination();
       
       closeCarDetailModal();
     } catch (error) {
       console.error('Failed to update car', error);
       alert('Failed to update car. Please try again.');
+    } finally {
+      // Re-enable button and restore original text
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
     }
   });
 

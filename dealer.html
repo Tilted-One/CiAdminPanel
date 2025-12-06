@@ -15,7 +15,7 @@
       <nav>
         <a href="dashboard.html" class="logo">ჯერა მოტორსი<span>.</span></a>
         <ul class="nav-links">
-          <li><a href="dashboard.html" class="active">დაფა</a></li>
+          <li><a href="dashboard.html" class="active">მთავარი გვერდი</a></li>
           <li>
             <button id="logout-btn" class="btn btn-outline" type="button"
               style="padding: 0.5rem 1.5rem; font-size: 0.9rem; border-radius: 50px;">
@@ -87,6 +87,22 @@
         <div class="page-actions">
           <button id="new-car-btn" class="btn btn-primary" type="button">
             + მანქანის დამატება
+          </button>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination-container" class="pagination-container glass-card">
+        <div class="pagination-info">
+          <span id="pagination-info-text">გვერდი 1</span>
+        </div>
+        <div class="pagination-controls">
+          <button id="pagination-prev" class="btn btn-outline pagination-btn" type="button" disabled>
+            ← წინა
+          </button>
+          <div id="pagination-pages" class="pagination-pages"></div>
+          <button id="pagination-next" class="btn btn-outline pagination-btn" type="button">
+            შემდეგი →
           </button>
         </div>
       </div>
