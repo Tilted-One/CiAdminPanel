@@ -624,24 +624,49 @@ document.addEventListener('DOMContentLoaded', () => {
       let carsArray = [];
       let totalPagesCount = 1;
       let totalCarsCount = 0;
+      const CARS_PER_PAGE = 9; // 9 cars per page
       
-      // Handle different response formats
-      if (Array.isArray(data)) {
+      // Handle response with carsCount property (priority case)
+      if (data && typeof data.carsCount === 'number') {
+        totalCarsCount = data.carsCount;
+        // Calculate total pages: if carsCount > 9, add second page, and so on
+        totalPagesCount = Math.ceil(totalCarsCount / CARS_PER_PAGE);
+        
+        // Extract cars array from response
+        if (Array.isArray(data.cars)) {
+          carsArray = data.cars;
+        } else if (Array.isArray(data.data)) {
+          carsArray = data.data;
+        } else if (Array.isArray(data.content)) {
+          carsArray = data.content;
+        } else if (Array.isArray(data)) {
+          // If data itself is an array but also has carsCount, use the array
+          carsArray = data;
+        }
+      }
+      // Handle different response formats (fallback)
+      else if (Array.isArray(data)) {
         carsArray = data;
         totalCarsCount = data.length;
+        totalPagesCount = Math.ceil(totalCarsCount / CARS_PER_PAGE);
       } else if (data && Array.isArray(data.cars)) {
         carsArray = data.cars;
         totalCarsCount = data.totalCars || data.total || carsArray.length;
-        totalPagesCount = data.totalPages || 1;
+        totalPagesCount = data.totalPages || Math.ceil(totalCarsCount / CARS_PER_PAGE);
       } else if (data && Array.isArray(data.data)) {
         carsArray = data.data;
         totalCarsCount = data.totalCars || data.total || carsArray.length;
-        totalPagesCount = data.totalPages || 1;
+        totalPagesCount = data.totalPages || Math.ceil(totalCarsCount / CARS_PER_PAGE);
       } else if (data && data.content && Array.isArray(data.content)) {
         // Spring Boot Page format
         carsArray = data.content;
         totalCarsCount = data.totalElements || data.total || carsArray.length;
-        totalPagesCount = data.totalPages || 1;
+        totalPagesCount = data.totalPages || Math.ceil(totalCarsCount / CARS_PER_PAGE);
+      }
+      
+      // Ensure totalPages is at least 1
+      if (totalPagesCount < 1) {
+        totalPagesCount = 1;
       }
 
       const normalizedCars = carsArray.map((car, index) => normalizeCar(car, index));
