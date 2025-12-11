@@ -1166,14 +1166,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Detail modal form handlers
   carDetailForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    // Disable submit to prevent duplicate clicks while processing
+    const saveBtn = carDetailForm.querySelector('button[type="submit"]');
+    const _originalSaveBtnText = saveBtn ? saveBtn.textContent : '';
+    if (saveBtn && saveBtn.disabled) return; // already processing
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'იტვირთება...';
+    }
     if (!currentDetailCarId) {
       closeCarDetailModal();
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = _originalSaveBtnText; }
       return;
     }
 
     const index = cars.findIndex((c) => c.id === currentDetailCarId);
     if (index === -1) {
       closeCarDetailModal();
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = _originalSaveBtnText; }
       return;
     }
 
@@ -1219,6 +1229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof saveCarApi !== 'function') {
       console.error('Car API unavailable');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = _originalSaveBtnText; }
       return;
     }
 
@@ -1261,6 +1272,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Failed to update car', error);
       alert('Failed to update car. Please try again.');
+    } finally {
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = _originalSaveBtnText; }
     }
   });
 
@@ -1387,9 +1400,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   editDealerForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    // Prevent duplicate submits
+    const editSaveBtn = editDealerForm.querySelector('button[type="submit"]');
+    const _originalEditSaveText = editSaveBtn ? editSaveBtn.textContent : '';
+    if (editSaveBtn && editSaveBtn.disabled) return;
+    if (editSaveBtn) { editSaveBtn.disabled = true; editSaveBtn.textContent = 'იტვირთება...'; }
     
     if (!dealer) {
       editDealerError.textContent = 'Dealer information not available. Please refresh the page.';
+      if (editSaveBtn) { editSaveBtn.disabled = false; editSaveBtn.textContent = _originalEditSaveText; }
       return;
     }
 
@@ -1400,6 +1419,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!name || !username) {
       editDealerError.textContent = 'Name and Username are required.';
+      if (editSaveBtn) { editSaveBtn.disabled = false; editSaveBtn.textContent = _originalEditSaveText; }
       return;
     }
 
@@ -1409,12 +1429,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const actualDealerId = dealer.id || dealer.dealerId || dealerId;
     if (!actualDealerId) {
       editDealerError.textContent = 'Dealer ID not found. Please refresh the page.';
+      if (editSaveBtn) { editSaveBtn.disabled = false; editSaveBtn.textContent = _originalEditSaveText; }
       return;
     }
 
     const updateApi = window.dealerUpdateApi?.updateDealer;
     if (!updateApi) {
       editDealerError.textContent = 'Update API unavailable. Please refresh the page.';
+      if (editSaveBtn) { editSaveBtn.disabled = false; editSaveBtn.textContent = _originalEditSaveText; }
       return;
     }
 
@@ -1456,9 +1478,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       closeEditDealerModal();
+      if (editSaveBtn) { editSaveBtn.disabled = false; editSaveBtn.textContent = _originalEditSaveText; }
     } catch (error) {
       console.error('Failed to update dealer', error);
       editDealerError.textContent = error instanceof Error ? error.message : 'Failed to update dealer.';
+      if (editSaveBtn) { editSaveBtn.disabled = false; editSaveBtn.textContent = _originalEditSaveText; }
     }
   });
 
